@@ -1,0 +1,12 @@
+[
+  {
+    "_id": "mogt9n30xpw0mq14zhf",
+    "name": "Admin User",
+    "email": "admin@evergreen.com",
+    "password": "$2a$10$OyLtCkSndKSamyK6DR4Z2eNQSOlTXOvoicBMnbWb/0a9Fyyh/hzMG",
+    "role": "admin",
+    "isBlocked": false,
+    "wishlist": [],
+    "createdAt": "2026-04-27T06:23:23.676Z"
+  }
+]

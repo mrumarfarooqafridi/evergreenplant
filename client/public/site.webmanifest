@@ -1,0 +1,16 @@
+{
+  "name": "Evergreen Plant Nursery",
+  "short_name": "Evergreen",
+  "description": "Premium plant nursery in UAE offering indoor and outdoor plants",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#22c55e",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "32x32",
+      "type": "image/svg+xml"
+    }
+  ]
+}

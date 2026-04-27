@@ -1,0 +1,291 @@
+const fs = require("fs").promises;
+const path = require("path");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+
+class FileDatabase {
+  constructor() {
+    this.dataDir = path.join(__dirname, "data");
+    this.usersFile = path.join(this.dataDir, "users.json");
+    this.productsFile = path.join(this.dataDir, "products.json");
+    this.ordersFile = path.join(this.dataDir, "orders.json");
+    this.initialized = false;
+  }
+
+  async init() {
+    if (this.initialized) return;
+
+    try {
+      await fs.mkdir(this.dataDir, { recursive: true });
+
+      // Initialize files if they don't exist
+      await this.ensureFile(this.usersFile, []);
+      await this.ensureFile(this.productsFile, []);
+      await this.ensureFile(this.ordersFile, []);
+
+      // Seed initial data
+      await this.seedInitialData();
+
+      this.initialized = true;
+      console.log("📁 File database initialized");
+    } catch (error) {
+      console.error("❌ Error initializing file database:", error);
+      throw error;
+    }
+  }
+
+  async ensureFile(filePath, defaultData) {
+    try {
+      await fs.access(filePath);
+    } catch {
+      await fs.writeFile(filePath, JSON.stringify(defaultData, null, 2));
+    }
+  }
+
+  async seedInitialData() {
+    const users = await this.readData(this.usersFile);
+    const products = await this.readData(this.productsFile);
+
+    // Seed admin user
+    if (users.length === 0) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash("admin123", salt);
+
+      users.push({
+        _id: this.generateId(),
+        name: "Admin User",
+        email: "admin@evergreen.com",
+        password: hashedPassword,
+        role: "admin",
+        isBlocked: false,
+        wishlist: [],
+        createdAt: new Date().toISOString(),
+      });
+      await this.writeData(this.usersFile, users);
+      console.log("👤 Admin user created");
+    }
+
+    // Seed products
+    if (products.length === 0) {
+      const sampleProducts = [
+        {
+          _id: this.generateId(),
+          name: "Snake Plant",
+          description:
+            "Low-maintenance indoor plant known for air purification",
+          price: 45,
+          category: "indoor",
+          stock: 25,
+          images: ["/plant_imgs/snake-plant.png"],
+          isAvailable: true,
+          createdAt: new Date().toISOString(),
+        },
+        {
+          _id: this.generateId(),
+          name: "Peace Lily",
+          description: "Beautiful flowering plant that thrives in low light",
+          price: 35,
+          category: "indoor",
+          stock: 20,
+          images: ["/plant_imgs/peace-lily.png"],
+          isAvailable: true,
+          createdAt: new Date().toISOString(),
+        },
+        {
+          _id: this.generateId(),
+          name: "Spider Plant",
+          description: "Easy to grow plant with cascading leaves",
+          price: 25,
+          category: "indoor",
+          stock: 30,
+          images: ["/plant-placeholder.svg"],
+          isAvailable: true,
+          createdAt: new Date().toISOString(),
+        },
+        {
+          _id: this.generateId(),
+          name: "Pothos",
+          description: "Trailing vine perfect for beginners",
+          price: 20,
+          category: "indoor",
+          stock: 40,
+          images: ["/plant-placeholder.svg"],
+          isAvailable: true,
+          createdAt: new Date().toISOString(),
+        },
+        {
+          _id: this.generateId(),
+          name: "Lavender",
+          description: "Fragrant herb perfect for gardens",
+          price: 15,
+          category: "outdoor",
+          stock: 50,
+          images: ["/plant-placeholder.svg"],
+          isAvailable: true,
+          createdAt: new Date().toISOString(),
+        },
+        {
+          _id: this.generateId(),
+          name: "Rosemary",
+          description: "Aromatic herb for cooking and gardens",
+          price: 12,
+          category: "outdoor",
+          stock: 35,
+          images: ["/plant-placeholder.svg"],
+          isAvailable: true,
+          createdAt: new Date().toISOString(),
+        },
+      ];
+
+      await this.writeData(this.productsFile, sampleProducts);
+      console.log("🌱 Sample products created");
+    }
+  }
+
+  generateId() {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+  }
+
+  async readData(filePath) {
+    try {
+      const data = await fs.readFile(filePath, "utf8");
+      return JSON.parse(data);
+    } catch (error) {
+      console.error(`Error reading ${filePath}:`, error);
+      return [];
+    }
+  }
+
+  async writeData(filePath, data) {
+    try {
+      await fs.writeFile(filePath, JSON.stringify(data, null, 2));
+    } catch (error) {
+      console.error(`Error writing ${filePath}:`, error);
+      throw error;
+    }
+  }
+
+  // User operations
+  async findUser(query) {
+    const users = await this.readData(this.usersFile);
+    return users.find((user) =>
+      Object.keys(query).every((key) => user[key] === query[key]),
+    );
+  }
+
+  async createUser(userData) {
+    const users = await this.readData(this.usersFile);
+    const newUser = {
+      _id: this.generateId(),
+      ...userData,
+      createdAt: new Date().toISOString(),
+    };
+    users.push(newUser);
+    await this.writeData(this.usersFile, users);
+    return newUser;
+  }
+
+  async getAllUsers() {
+    const users = await this.readData(this.usersFile);
+    return users.map((user) => {
+      const { password, ...userWithoutPassword } = user;
+      return userWithoutPassword;
+    });
+  }
+
+  async getUserById(id) {
+    const users = await this.readData(this.usersFile);
+    return users.find((user) => user._id === id);
+  }
+
+  async deleteUser(id) {
+    const users = await this.readData(this.usersFile);
+    const filteredUsers = users.filter((user) => user._id !== id);
+    await this.writeData(this.usersFile, filteredUsers);
+    return true;
+  }
+
+  // Product operations
+  async getProducts(query = {}, options = {}) {
+    let products = await this.readData(this.productsFile);
+
+    // Apply filters
+    if (query.category) {
+      products = products.filter((p) => p.category === query.category);
+    }
+    if (query.minPrice || query.maxPrice) {
+      products = products.filter((p) => {
+        const price = p.price;
+        if (query.minPrice && price < query.minPrice) return false;
+        if (query.maxPrice && price > query.maxPrice) return false;
+        return true;
+      });
+    }
+    if (query.search) {
+      const searchTerm = query.search.toLowerCase();
+      products = products.filter(
+        (p) =>
+          p.name.toLowerCase().includes(searchTerm) ||
+          p.description.toLowerCase().includes(searchTerm),
+      );
+    }
+
+    // Apply pagination
+    const limit = options.limit || 10;
+    const page = options.page || 1;
+    const startIndex = (page - 1) * limit;
+    const paginatedProducts = products.slice(startIndex, startIndex + limit);
+
+    return {
+      products: paginatedProducts,
+      totalPages: Math.ceil(products.length / limit),
+      currentPage: page,
+    };
+  }
+
+  async getProduct(id) {
+    const products = await this.readData(this.productsFile);
+    return products.find((product) => product._id === id);
+  }
+
+  async createProduct(productData) {
+    const products = await this.readData(this.productsFile);
+    const newProduct = {
+      _id: this.generateId(),
+      ...productData,
+      createdAt: new Date().toISOString(),
+    };
+    products.push(newProduct);
+    await this.writeData(this.productsFile, products);
+    return newProduct;
+  }
+
+  async deleteProduct(productId) {
+    const products = await this.readData(this.productsFile);
+    const filteredProducts = products.filter(
+      (product) => product._id !== productId,
+    );
+    await this.writeData(this.productsFile, filteredProducts);
+    return true;
+  }
+
+  // Order operations
+  async createOrder(orderData) {
+    const orders = await this.readData(this.ordersFile);
+    const newOrder = {
+      _id: this.generateId(),
+      ...orderData,
+      createdAt: new Date().toISOString(),
+    };
+    orders.push(newOrder);
+    await this.writeData(this.ordersFile, orders);
+    return newOrder;
+  }
+
+  async getUserOrders(userId) {
+    const orders = await this.readData(this.ordersFile);
+    return orders.filter((order) => order.user === userId);
+  }
+}
+
+module.exports = new FileDatabase();
