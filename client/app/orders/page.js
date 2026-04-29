@@ -36,16 +36,16 @@ export default function Orders() {
   };
 
   const getStatusColor = (status) => {
-    switch (status) {
-      case "Pending":
+    switch ((status || "").toLowerCase()) {
+      case "pending":
         return "bg-yellow-100 text-yellow-800";
-      case "Processing":
+      case "processing":
         return "bg-blue-100 text-blue-800";
-      case "Shipped":
+      case "shipped":
         return "bg-purple-100 text-purple-800";
-      case "Delivered":
+      case "delivered":
         return "bg-green-100 text-green-800";
-      case "Cancelled":
+      case "cancelled":
         return "bg-red-100 text-red-800";
       default:
         return "bg-gray-100 text-gray-800";
@@ -53,16 +53,16 @@ export default function Orders() {
   };
 
   const getStatusIcon = (status) => {
-    switch (status) {
-      case "Pending":
+    switch ((status || "").toLowerCase()) {
+      case "pending":
         return "⏳";
-      case "Processing":
+      case "processing":
         return "🔄";
-      case "Shipped":
+      case "shipped":
         return "📦";
-      case "Delivered":
+      case "delivered":
         return "✅";
-      case "Cancelled":
+      case "cancelled":
         return "❌";
       default:
         return "📋";
@@ -123,7 +123,7 @@ export default function Orders() {
           className="text-center py-12"
         >
           <p className="text-gray-600 mb-4 text-lg">
-            You haven't placed any orders yet.
+            You haven&apos;t placed any orders yet.
           </p>
           <a href="/products" className="btn-primary inline-block">
             Start Shopping
@@ -214,13 +214,13 @@ export default function Orders() {
                 >
                   <div
                     className={`h-full rounded-full ${
-                      order.status === "Pending"
+                      (order.status || "").toLowerCase() === "pending"
                         ? "w-1/4 bg-yellow-500"
-                        : order.status === "Processing"
+                        : (order.status || "").toLowerCase() === "processing"
                           ? "w-1/2 bg-blue-500"
-                          : order.status === "Shipped"
+                          : (order.status || "").toLowerCase() === "shipped"
                             ? "w-3/4 bg-purple-500"
-                            : order.status === "Delivered"
+                            : (order.status || "").toLowerCase() === "delivered"
                               ? "w-full bg-green-500"
                               : "w-full bg-red-500"
                     }`}

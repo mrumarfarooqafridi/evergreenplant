@@ -33,7 +33,7 @@ export default function AdminUsers() {
       }
 
       const response = await axios.get(
-        "http://localhost:5000/api/admin/users",
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/users`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -56,7 +56,7 @@ export default function AdminUsers() {
 
       if (editingUser) {
         await axios.put(
-          `http://localhost:5000/api/admin/users/${editingUser._id}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${editingUser._id}`,
           formData,
           { headers: { Authorization: `Bearer ${token}` } },
         );
@@ -96,7 +96,7 @@ export default function AdminUsers() {
     try {
       const token = localStorage.getItem("token");
       await axios.patch(
-        `http://localhost:5000/api/admin/users/${userId}/toggle-block`,
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/toggle-block`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -114,7 +114,7 @@ export default function AdminUsers() {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/admin/users/${userId}`, {
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success("User deleted successfully");

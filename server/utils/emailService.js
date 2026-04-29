@@ -94,3 +94,42 @@ const sendContactEmail = async (contactData) => {
 };
 
 module.exports = { sendContactEmail };
+
+const sendPasswordResetOtp = async ({ to, name, otp }) => {
+  try {
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to,
+      subject: "Your Evergreen password reset code",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #10b981;">Password Reset</h2>
+          <p>Hi ${name || "there"},</p>
+          <p>Use the OTP below to reset your password. This code expires in <strong>10 minutes</strong>.</p>
+          <div style="margin: 24px 0; padding: 16px; background: #f3f4f6; border-radius: 12px; text-align:center;">
+            <div style="font-size: 28px; letter-spacing: 6px; font-weight: 700; color: #111827;">
+              ${otp}
+            </div>
+          </div>
+          <p style="color:#6b7280; font-size: 12px;">
+            If you didn’t request this, you can ignore this email.
+          </p>
+        </div>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    return { success: true, message: "OTP email sent" };
+  } catch (error) {
+    console.error("Error sending OTP email:", error);
+    const authIssue = /535|5\.7\.8|BadCredentials|EAUTH|Invalid login/i.test(
+      error.message,
+    );
+    const message = authIssue
+      ? "Email authentication failed. Please use a valid Gmail account with a generated App Password (EMAIL_APP_PASSWORD) or check your EMAIL_USER and email credentials."
+      : error.message;
+    return { success: false, message };
+  }
+};
+
+module.exports.sendPasswordResetOtp = sendPasswordResetOtp;

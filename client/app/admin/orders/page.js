@@ -24,10 +24,10 @@ export default function AdminOrders() {
         return;
       }
 
-      const response = await axios.get("http://localhost:5000/api/orders", {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setOrders(response.data.orders);
+      setOrders(Array.isArray(response.data) ? response.data : response.data.orders || []);
     } catch (error) {
       toast.error("Failed to fetch orders");
       if (error.response?.status === 401) {
@@ -42,7 +42,7 @@ export default function AdminOrders() {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5000/api/orders/${orderId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -54,7 +54,7 @@ export default function AdminOrders() {
   };
 
   const getStatusIcon = (status) => {
-    switch (status) {
+    switch ((status || "").toLowerCase()) {
       case "pending":
         return <Package className="text-yellow-500" size={20} />;
       case "processing":
@@ -71,7 +71,7 @@ export default function AdminOrders() {
   };
 
   const getStatusColor = (status) => {
-    switch (status) {
+    switch ((status || "").toLowerCase()) {
       case "pending":
         return "bg-yellow-100 text-yellow-800";
       case "processing":
@@ -176,7 +176,7 @@ export default function AdminOrders() {
                         <Eye size={16} />
                       </button>
                       <select
-                        value={order.status}
+                        value={(order.status || "").toLowerCase()}
                         onChange={(e) =>
                           updateOrderStatus(order._id, e.target.value)
                         }
@@ -229,7 +229,11 @@ export default function AdminOrders() {
                   {selectedOrder.address && (
                     <div className="mt-2">
                       <strong>Shipping Address:</strong>
-                      <p className="mt-1">{selectedOrder.address}</p>
+                      <p className="mt-1">
+                        {selectedOrder.address.street}, {selectedOrder.address.city},{" "}
+                        {selectedOrder.address.state} {selectedOrder.address.zipCode},{" "}
+                        {selectedOrder.address.country}
+                      </p>
                     </div>
                   )}
                 </div>

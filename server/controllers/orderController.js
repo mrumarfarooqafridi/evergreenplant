@@ -1,6 +1,33 @@
 const Order = require("../models/Order");
 const Product = require("../models/Product");
 
+const hydrateFileOrder = async (req, order) => {
+  const hydrated = { ...order };
+
+  // user
+  if (req.user?.role === "admin") {
+    const u = await req.fileDatabase.getUserById(order.user);
+    hydrated.user = u ? { _id: u._id, name: u.name, email: u.email } : null;
+  } else {
+    hydrated.user = order.user;
+  }
+
+  // products
+  hydrated.products = await Promise.all(
+    (order.products || []).map(async (item) => {
+      const p = await req.fileDatabase.getProduct(item.product);
+      return {
+        ...item,
+        product: p
+          ? { _id: p._id, name: p.name, price: p.price, images: p.images }
+          : null,
+      };
+    }),
+  );
+
+  return hydrated;
+};
+
 exports.getOrders = async (req, res) => {
   try {
     let query = {};
@@ -10,9 +37,10 @@ exports.getOrders = async (req, res) => {
 
     let orders;
     if (req.useFileDatabase) {
-      orders = await req.fileDatabase.getOrders(req.user.id, {
+      const rawOrders = await req.fileDatabase.getOrders(req.user.id, {
         admin: req.user.role === "admin",
       });
+      orders = await Promise.all(rawOrders.map((o) => hydrateFileOrder(req, o)));
     } else {
       orders = await Order.find(query)
         .populate("user", "name email")
@@ -31,11 +59,12 @@ exports.getOrder = async (req, res) => {
   try {
     let order;
     if (req.useFileDatabase) {
-      order = await req.fileDatabase.getOrder(
+      const rawOrder = await req.fileDatabase.getOrder(
         req.params.id,
         req.user.id,
         req.user.role === "admin",
       );
+      order = rawOrder ? await hydrateFileOrder(req, rawOrder) : null;
     } else {
       order = await Order.findById(req.params.id)
         .populate("user", "name email")
@@ -46,11 +75,13 @@ exports.getOrder = async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    if (
-      req.user.role !== "admin" &&
-      order.user._id.toString() !== req.user.id
-    ) {
-      return res.status(403).json({ message: "Access denied" });
+    // Access control (file DB uses string ids, Mongo uses populated doc)
+    if (req.user.role !== "admin") {
+      const orderUserId =
+        typeof order.user === "string" ? order.user : order.user?._id?.toString();
+      if (orderUserId && orderUserId !== req.user.id) {
+        return res.status(403).json({ message: "Access denied" });
+      }
     }
 
     res.json(order);
@@ -107,7 +138,7 @@ exports.createOrder = async (req, res) => {
       totalPrice,
       address,
       paymentMethod,
-      status: "pending",
+      status: "Pending",
     };
 
     let order;
@@ -128,14 +159,21 @@ exports.createOrder = async (req, res) => {
 exports.updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
+    const normalizedStatus =
+      typeof status === "string" && status.length
+        ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
+        : status;
 
     let order;
     if (req.useFileDatabase) {
-      order = await req.fileDatabase.updateOrderStatus(req.params.id, status);
+      order = await req.fileDatabase.updateOrderStatus(
+        req.params.id,
+        normalizedStatus,
+      );
     } else {
       order = await Order.findByIdAndUpdate(
         req.params.id,
-        { status },
+        { status: normalizedStatus },
         { new: true },
       ).populate("user", "name email");
     }

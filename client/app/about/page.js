@@ -80,7 +80,7 @@ export default function About() {
                 Our Vision
               </h2>
               <p className="text-slate-600 leading-8">
-                To become the region's most trusted nursery brand, known for
+                To become the region&apos;s most trusted nursery brand, known for
                 sustainability, design, and exceptional care in every plant we
                 deliver.
               </p>

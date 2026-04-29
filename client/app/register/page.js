@@ -53,10 +53,15 @@ export default function Register() {
       );
 
       localStorage.setItem("token", response.data.token);
-      toast.success("Welcome to Evergreen! Registration successful.", {
+      toast.success(
+        response.data?.user?.name
+          ? `Welcome to Evergreen, ${response.data.user.name}!`
+          : "Welcome to Evergreen! Registration successful.",
+        {
         icon: "🎉",
         duration: 5000,
-      });
+        },
+      );
       router.push("/");
     } catch (error) {
       console.error("Registration error:", error);

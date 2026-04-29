@@ -90,7 +90,7 @@ export default function Testimonials() {
                 ))}
               </div>
               <p className="text-gray-600 mb-6 text-lg leading-relaxed italic">
-                "{testimonial.text}"
+                &ldquo;{testimonial.text}&rdquo;
               </p>
               <div className="border-t pt-4">
                 <p className="font-bold text-gray-900 text-lg">

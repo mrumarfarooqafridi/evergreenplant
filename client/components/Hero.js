@@ -71,8 +71,8 @@ export default function Hero() {
             className="mb-12"
           >
             <blockquote className="text-lg md:text-xl italic font-light max-w-2xl mx-auto leading-relaxed">
-              "The clearest way into the Universe is through a forest
-              wilderness."
+              &ldquo;The clearest way into the Universe is through a forest
+              wilderness.&rdquo;
               <br />
               <cite className="block mt-4 text-yellow-300 font-semibold">
                 — John Muir

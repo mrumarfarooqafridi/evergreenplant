@@ -31,6 +31,14 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product'
   }],
+  resetOtpHash: {
+    type: String,
+    default: null,
+  },
+  resetOtpExpires: {
+    type: Number,
+    default: null,
+  },
   createdAt: {
     type: Date,
     default: Date.now

@@ -185,6 +185,44 @@ class FileDatabase {
     return newUser;
   }
 
+  async updateUser(id, updateData) {
+    const users = await this.readData(this.usersFile);
+    const idx = users.findIndex((u) => u._id === id);
+    if (idx === -1) return null;
+
+    const updated = {
+      ...users[idx],
+      ...Object.fromEntries(
+        Object.entries(updateData).filter(([, v]) => v !== undefined),
+      ),
+      updatedAt: new Date().toISOString(),
+    };
+
+    users[idx] = updated;
+    await this.writeData(this.usersFile, users);
+
+    const { password, ...withoutPassword } = updated;
+    return withoutPassword;
+  }
+
+  async updateUserInternal(id, updateData) {
+    const users = await this.readData(this.usersFile);
+    const idx = users.findIndex((u) => u._id === id);
+    if (idx === -1) return null;
+
+    const updated = {
+      ...users[idx],
+      ...Object.fromEntries(
+        Object.entries(updateData).filter(([, v]) => v !== undefined),
+      ),
+      updatedAt: new Date().toISOString(),
+    };
+
+    users[idx] = updated;
+    await this.writeData(this.usersFile, users);
+    return updated;
+  }
+
   async getAllUsers() {
     const users = await this.readData(this.usersFile);
     return users.map((user) => {
@@ -260,6 +298,30 @@ class FileDatabase {
     return newProduct;
   }
 
+  async updateProduct(productId, updateData) {
+    const products = await this.readData(this.productsFile);
+    const idx = products.findIndex((p) => p._id === productId);
+    if (idx === -1) return null;
+
+    const current = products[idx];
+    const merged = {
+      ...current,
+      ...Object.fromEntries(
+        Object.entries(updateData).filter(([, v]) => v !== undefined),
+      ),
+      updatedAt: new Date().toISOString(),
+    };
+
+    // If stock changes, keep availability roughly in sync
+    if (typeof merged.stock === "number") {
+      merged.isAvailable = merged.stock > 0;
+    }
+
+    products[idx] = merged;
+    await this.writeData(this.productsFile, products);
+    return merged;
+  }
+
   async deleteProduct(productId) {
     const products = await this.readData(this.productsFile);
     const filteredProducts = products.filter(
@@ -282,9 +344,38 @@ class FileDatabase {
     return newOrder;
   }
 
-  async getUserOrders(userId) {
+  async getOrders(userId, { admin = false } = {}) {
     const orders = await this.readData(this.ordersFile);
-    return orders.filter((order) => order.user === userId);
+    const filtered = admin ? orders : orders.filter((o) => o.user === userId);
+    return filtered.sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+  }
+
+  async getOrder(orderId, userId, isAdmin = false) {
+    const orders = await this.readData(this.ordersFile);
+    const order = orders.find((o) => o._id === orderId);
+    if (!order) return null;
+    if (!isAdmin && order.user !== userId) return null;
+    return order;
+  }
+
+  async updateOrderStatus(orderId, status) {
+    const orders = await this.readData(this.ordersFile);
+    const idx = orders.findIndex((o) => o._id === orderId);
+    if (idx === -1) return null;
+
+    orders[idx] = {
+      ...orders[idx],
+      status,
+      updatedAt: new Date().toISOString(),
+    };
+    await this.writeData(this.ordersFile, orders);
+    return orders[idx];
+  }
+
+  async getUserOrders(userId) {
+    return this.getOrders(userId, { admin: false });
   }
 }
 

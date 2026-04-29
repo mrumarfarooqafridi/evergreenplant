@@ -40,13 +40,20 @@ export default function Admin() {
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/orders`,
-        {
+      const [ordersRes, usersRes] = await Promise.all([
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
           headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+        }),
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/admin/users`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
 
+      const response = ordersRes;
+      const usersResponse = usersRes;
+      const users = usersResponse?.data?.users || [];
+
+      // Orders
       const orders = response.data;
       const totalRevenue = orders.reduce(
         (sum, order) => sum + order.totalPrice,
@@ -56,7 +63,7 @@ export default function Admin() {
       setStats({
         totalOrders: orders.length,
         totalRevenue,
-        totalUsers: 0, // Would need a separate API call
+        totalUsers: users.length,
         recentOrders: orders.slice(0, 5),
       });
     } catch (error) {

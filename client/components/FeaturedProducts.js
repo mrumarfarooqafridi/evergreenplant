@@ -15,8 +15,9 @@ import {
 import toast from "react-hot-toast";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import "swiper/css/effect-coverflow";
-import { EffectCoverflow, Autoplay } from "swiper/modules";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
 
 export default function FeaturedProducts() {
   const [products, setProducts] = useState([]);
@@ -133,180 +134,213 @@ export default function FeaturedProducts() {
           </p>
         </motion.div>
 
-        <div className="relative">
+        <div className="relative px-4 sm:px-8">
+          <style jsx>{`
+            .swiper-pagination-bullet {
+              background: rgba(34, 197, 94, 0.4);
+              opacity: 1;
+            }
+            .swiper-pagination-bullet-active {
+              background: rgb(34, 197, 94);
+            }
+            .swiper-button-next,
+            .swiper-button-prev {
+              color: rgb(34, 197, 94);
+              background: rgba(255, 255, 255, 0.9);
+              width: 44px;
+              height: 44px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              top: 50%;
+              transform: translateY(-50%);
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+              transition: all 0.3s ease;
+            }
+            .swiper-button-next:hover,
+            .swiper-button-prev:hover {
+              background: rgba(255, 255, 255, 1);
+              box-shadow: 0 6px 16px rgba(34, 197, 94, 0.2);
+            }
+            .swiper-button-next::after,
+            .swiper-button-prev::after {
+              font-size: 16px;
+              font-weight: bold;
+            }
+          `}</style>
           <Swiper
-            effect={"coverflow"}
-            grabCursor={true}
-            centeredSlides={true}
-            slidesPerView={"auto"}
-            coverflowEffect={{
-              rotate: 50,
-              stretch: 0,
-              depth: 100,
-              modifier: 1,
-              slideShadows: true,
+            slidesPerView={1}
+            spaceBetween={16}
+            breakpoints={{
+              640: { slidesPerView: 2, spaceBetween: 20 },
+              1024: { slidesPerView: 3, spaceBetween: 24 },
+              1280: { slidesPerView: 4, spaceBetween: 24 },
             }}
             autoplay={{
-              delay: 5000,
+              delay: 4500,
               disableOnInteraction: false,
             }}
+            pagination={{
+              clickable: true,
+              dynamicBullets: true,
+            }}
+            navigation={true}
             loop={true}
-            modules={[EffectCoverflow, Autoplay]}
+            modules={[Autoplay, Pagination, Navigation]}
             className="mySwiper"
           >
             {products.map((product, index) => (
-              <SwiperSlide key={product._id} style={{ width: "300px" }}>
+              <SwiperSlide key={product._id}>
                 <motion.div
-                  initial={{ opacity: 0, y: 50 }}
+                  initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{
-                    duration: 0.6,
-                    delay: index * 0.1,
+                    duration: 0.5,
+                    delay: index * 0.08,
                     ease: "easeOut",
                   }}
                   viewport={{ once: true }}
                   whileHover={{
-                    y: -12,
-                    scale: 1.02,
-                    transition: { duration: 0.3 },
+                    y: -8,
+                    transition: { duration: 0.25 },
                   }}
-                  className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl overflow-hidden border border-white/50"
+                  className="bg-white rounded-2xl shadow-lg hover:shadow-xl overflow-hidden border border-gray-100 h-full transition-all duration-300"
                 >
-                  {/* Enhanced Image Section */}
-                  <div className="relative overflow-hidden bg-gradient-to-br from-green-50 to-white">
+                  {/* Compact Image Section */}
+                  <div className="relative overflow-hidden bg-gradient-to-br from-green-50 to-gray-50">
                     <motion.div
-                      whileHover={{ scale: 1.1 }}
-                      transition={{ duration: 0.4 }}
-                      className="relative"
+                      whileHover={{ scale: 1.08 }}
+                      transition={{ duration: 0.3 }}
+                      className="relative h-48"
                     >
                       <Image
                         src={product.images[0] || "/plant-placeholder.svg"}
                         alt={product.name}
                         width={400}
-                        height={280}
-                        className="w-full h-64 object-cover"
+                        height={192}
+                        className="w-full h-full object-cover"
                         loading="lazy"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
                     </motion.div>
 
-                    {/* Enhanced Rating Badge */}
+                    {/* Compact Rating Badge */}
                     <motion.div
                       initial={{ scale: 0 }}
                       whileInView={{ scale: 1 }}
-                      transition={{ delay: 0.8 + index * 0.1, type: "spring" }}
+                      transition={{ delay: 0.3, type: "spring" }}
                       viewport={{ once: true }}
-                      className="absolute top-4 right-4 bg-white/95 backdrop-blur-md rounded-2xl p-3 shadow-lg border border-white/50"
+                      className="absolute top-3 right-3 bg-white shadow-md rounded-full p-2"
                     >
-                      <div className="flex items-center space-x-2">
-                        <FaStar className="text-yellow-400 text-sm" />
-                        <span className="text-sm font-bold text-gray-800">
+                      <div className="flex items-center space-x-1">
+                        <FaStar className="text-yellow-400 text-xs" />
+                        <span className="text-xs font-bold text-gray-700">
                           4.8
                         </span>
                       </div>
                     </motion.div>
 
-                    {/* Enhanced Stock Badge */}
+                    {/* Compact Stock Badge */}
                     {product.stock < 10 && (
                       <motion.div
-                        initial={{ x: -100 }}
+                        initial={{ x: -50 }}
                         whileInView={{ x: 0 }}
-                        transition={{ delay: 0.5, type: "spring" }}
+                        transition={{ delay: 0.2, type: "spring" }}
                         viewport={{ once: true }}
-                        className="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs px-4 py-2 rounded-2xl font-bold shadow-lg"
+                        className="absolute top-3 left-3 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow-md"
                       >
-                        ⚡ Low Stock
+                        Low Stock
                       </motion.div>
                     )}
 
-                    {/* Quick View Overlay */}
+                    {/* Compact Quick View Overlay */}
                     <motion.div
                       initial={{ opacity: 0 }}
                       whileHover={{ opacity: 1 }}
-                      transition={{ duration: 0.3 }}
-                      className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      transition={{ duration: 0.25 }}
+                      className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300"
                     >
                       <Link
                         href={`/products/${product._id}`}
-                        className="bg-white/95 backdrop-blur-md text-gray-800 px-6 py-3 rounded-2xl font-semibold hover:bg-white transition-all duration-300 flex items-center space-x-2 shadow-xl"
+                        className="bg-white text-gray-800 px-5 py-2 rounded-lg font-semibold hover:bg-gray-50 transition-all duration-300 flex items-center space-x-2 shadow-lg text-sm"
                       >
-                        <FaEye className="text-lg" />
-                        <span>Quick View</span>
+                        <FaEye className="text-sm" />
+                        <span>View</span>
                       </Link>
                     </motion.div>
                   </div>
 
-                  {/* Enhanced Content Section */}
-                  <div className="p-8 bg-gradient-to-b from-white to-gray-50/50">
-                    <motion.h3
-                      className="text-2xl font-bold mb-3 text-gray-900 group-hover:text-green-700 transition-colors duration-300"
-                      initial={{ opacity: 0 }}
-                      whileInView={{ opacity: 1 }}
-                      transition={{ delay: 0.3 + index * 0.1 }}
-                      viewport={{ once: true }}
-                    >
-                      {product.name}
-                    </motion.h3>
+                  {/* Compact Content Section */}
+                  <div className="p-5 bg-white flex flex-col justify-between h-full">
+                    <div>
+                      <motion.h3
+                        className="text-lg font-bold mb-2 text-gray-900 line-clamp-2"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                        viewport={{ once: true }}
+                      >
+                        {product.name}
+                      </motion.h3>
 
-                    <motion.p
-                      className="text-gray-600 mb-6 leading-relaxed text-sm"
-                      initial={{ opacity: 0 }}
-                      whileInView={{ opacity: 1 }}
-                      transition={{ delay: 0.4 + index * 0.1 }}
-                      viewport={{ once: true }}
-                    >
-                      {product.description.substring(0, 120)}...
-                    </motion.p>
+                      <motion.p
+                        className="text-gray-600 mb-4 leading-snug text-xs line-clamp-2"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ delay: 0.25 }}
+                        viewport={{ once: true }}
+                      >
+                        {product.description}
+                      </motion.p>
+                    </div>
 
-                    <motion.div
-                      className="flex items-center justify-between mb-6"
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5 + index * 0.1 }}
-                      viewport={{ once: true }}
-                    >
-                      <div>
-                        <p className="text-3xl font-bold text-green-600 mb-1">
-                          AED {product.price}
-                        </p>
-                        <p className="text-sm text-gray-500 flex items-center">
-                          <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
-                          {product.stock} in stock
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
+                    <div>
+                      <motion.div
+                        className="flex items-center justify-between mb-4"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ delay: 0.3 }}
+                        viewport={{ once: true }}
+                      >
+                        <div>
+                          <p className="text-2xl font-bold text-green-600">
+                            AED {product.price}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {product.stock} in stock
+                          </p>
+                        </div>
+                        <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold">
                           Premium
                         </span>
-                      </div>
-                    </motion.div>
+                      </motion.div>
 
-                    {/* Enhanced Action Buttons */}
-                    <motion.div
-                      className="flex gap-4"
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.6 + index * 0.1 }}
-                      viewport={{ once: true }}
-                    >
-                      <Link
-                        href={`/products/${product._id}`}
-                        className="flex-1 rounded-2xl border-2 border-gray-200 px-6 py-4 text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-green-300 text-center transition-all duration-300 group/btn"
+                      {/* Compact Action Buttons */}
+                      <motion.div
+                        className="flex gap-3"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ delay: 0.35 }}
+                        viewport={{ once: true }}
                       >
-                        <span className="group-hover/btn:text-green-700 transition-colors duration-300">
-                          View Details
-                        </span>
-                      </Link>
-                      <motion.button
-                        onClick={() => addToCart(product)}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="flex-1 rounded-2xl bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-4 text-sm font-semibold hover:from-green-600 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2"
-                      >
-                        <FaShoppingCart className="text-sm" />
-                        <span>Add to Cart</span>
-                      </motion.button>
-                    </motion.div>
+                        <Link
+                          href={`/products/${product._id}`}
+                          className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 hover:border-green-400 text-center transition-all duration-300"
+                        >
+                          Details
+                        </Link>
+                        <motion.button
+                          onClick={() => addToCart(product)}
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.97 }}
+                          className="flex-1 rounded-lg bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 text-xs font-semibold hover:from-green-600 hover:to-green-700 shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center space-x-1"
+                        >
+                          <FaShoppingCart className="text-xs" />
+                          <span>Cart</span>
+                        </motion.button>
+                      </motion.div>
+                    </div>
                   </div>
                 </motion.div>
               </SwiperSlide>

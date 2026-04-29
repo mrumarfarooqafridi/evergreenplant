@@ -35,7 +35,7 @@ export default function AdminProducts() {
         return;
       }
 
-      const response = await axios.get("http://localhost:5000/api/products", {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProducts(response.data.products);
@@ -80,14 +80,14 @@ export default function AdminProducts() {
 
       if (editingProduct) {
         await axios.put(
-          `http://localhost:5000/api/products/${editingProduct._id}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/products/${editingProduct._id}`,
           formDataToSend,
           config,
         );
         toast.success("Product updated successfully");
       } else {
         await axios.post(
-          "http://localhost:5000/api/products",
+          `${process.env.NEXT_PUBLIC_API_URL}/products`,
           formDataToSend,
           config,
         );
@@ -130,7 +130,7 @@ export default function AdminProducts() {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/products/${productId}`, {
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/products/${productId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success("Product deleted successfully");

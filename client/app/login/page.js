@@ -29,10 +29,15 @@ export default function Login() {
         formData,
       );
       localStorage.setItem("token", response.data.token);
-      toast.success("Welcome back! Login successful.", {
+      toast.success(
+        response.data?.user?.name
+          ? `Welcome back, ${response.data.user.name}!`
+          : "Welcome back! Login successful.",
+        {
         icon: "🎉",
         duration: 4000,
-      });
+        },
+      );
       router.push("/");
     } catch (error) {
       console.error("Login error:", error);
@@ -87,9 +92,15 @@ export default function Login() {
         </form>
 
         <p className="text-center mt-6">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link href="/register" className="text-primary hover:underline">
             Register here
+          </Link>
+        </p>
+
+        <p className="text-center mt-3">
+          <Link href="/forgot-password" className="text-primary hover:underline text-sm">
+            Forgot password?
           </Link>
         </p>
       </div>

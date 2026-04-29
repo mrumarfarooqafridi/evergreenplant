@@ -12,6 +12,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata = {
+  metadataBase: new URL("https://evergreen-nursery.ae"),
   title: "Evergreen Plant Nursery | Premium Plants in UAE",
   description:
     "Discover a world of beautiful plants, expert care tips, and everything you need to create your perfect green space. Premium plant nursery in UAE with fast delivery.",
