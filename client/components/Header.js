@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import {
   FaShoppingCart,
   FaUser,
@@ -17,39 +18,61 @@ import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 
 export default function Header() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [cartCount, setCartCount] = useState(0);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        setUser(payload);
-      } catch (error) {
-        console.error("Invalid token:", error);
-        localStorage.removeItem("token");
+    const syncAuthAndCart = () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split(".")[1]));
+          setUser(payload);
+        } catch (error) {
+          console.error("Invalid token:", error);
+          localStorage.removeItem("token");
+          setUser(null);
+        }
+      } else {
+        setUser(null);
       }
-    }
+
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      setCartCount(cart.reduce((total, item) => total + item.quantity, 0));
+    };
+
+    syncAuthAndCart();
+
+    const handleAuthChange = () => syncAuthAndCart();
+    const handleStorage = (event) => {
+      if (!event.key || event.key === "token" || event.key === "cart") {
+        syncAuthAndCart();
+      }
+    };
+
+    window.addEventListener("authChanged", handleAuthChange);
+    window.addEventListener("storage", handleStorage);
 
     // Get cart count from localStorage
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    setCartCount(cart.reduce((total, item) => total + item.quantity, 0));
-
-    // Listen for cart updates
     const handleCartUpdate = () => {
       const cart = JSON.parse(localStorage.getItem("cart") || "[]");
       setCartCount(cart.reduce((total, item) => total + item.quantity, 0));
     };
 
     window.addEventListener("cartUpdated", handleCartUpdate);
-    return () => window.removeEventListener("cartUpdated", handleCartUpdate);
-  }, []);
+    return () => {
+      window.removeEventListener("cartUpdated", handleCartUpdate);
+      window.removeEventListener("authChanged", handleAuthChange);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, [pathname]);
 
   const logout = () => {
     localStorage.removeItem("token");
+    window.dispatchEvent(new Event("authChanged"));
     setUser(null);
     setIsUserMenuOpen(false);
     toast.success("Logged out successfully!");
@@ -123,7 +146,15 @@ export default function Header() {
                   className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-full transition-colors"
                   aria-label="User menu"
                 >
-                  <FaUserCircle className="text-xl text-gray-700" />
+                  {user.avatarUrl ? (
+                    <img
+                      src={user.avatarUrl}
+                      alt={user.name || "User"}
+                      className="w-8 h-8 rounded-full object-cover border border-gray-200"
+                    />
+                  ) : (
+                    <FaUserCircle className="text-xl text-gray-700" />
+                  )}
                   <span className="hidden md:block text-sm font-medium text-gray-700">
                     {user.name || user.email}
                   </span>

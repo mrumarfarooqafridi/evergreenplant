@@ -25,9 +25,11 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [me, setMe] = useState(null);
+  const [orders, setOrders] = useState([]);
   const [form, setForm] = useState({
     name: "",
     email: "",
+    avatarUrl: "",
     password: "",
     confirmPassword: "",
   });
@@ -44,11 +46,21 @@ export default function ProfilePage() {
         const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setMe(res.data);
+        const [profileRes, ordersRes] = await Promise.all([
+          axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+        setMe(profileRes.data);
+        setOrders(Array.isArray(ordersRes.data) ? ordersRes.data : []);
         setForm((prev) => ({
           ...prev,
-          name: res.data?.name || decoded?.name || "",
-          email: res.data?.email || decoded?.email || "",
+          name: profileRes.data?.name || decoded?.name || "",
+          email: profileRes.data?.email || decoded?.email || "",
+          avatarUrl: profileRes.data?.avatarUrl || "",
         }));
       } catch (e) {
         console.error(e);
@@ -83,6 +95,7 @@ export default function ProfilePage() {
         {
           name: form.name,
           email: form.email,
+          avatarUrl: form.avatarUrl,
           ...(form.password ? { password: form.password } : {}),
         },
         { headers: { Authorization: `Bearer ${token}` } },
@@ -90,6 +103,7 @@ export default function ProfilePage() {
 
       if (res.data?.token) {
         localStorage.setItem("token", res.data.token);
+        window.dispatchEvent(new Event("authChanged"));
       }
       setMe(res.data?.user || me);
       setForm((prev) => ({ ...prev, password: "", confirmPassword: "" }));
@@ -114,12 +128,31 @@ export default function ProfilePage() {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-2">My Profile</h1>
       <p className="text-gray-600 mb-8">
-        Manage your account details and password.
+        Manage your account, profile photo, and purchase history.
       </p>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="bg-white rounded-lg shadow-md p-6 border border-gray-100">
           <h2 className="text-xl font-semibold mb-4">Account</h2>
+          <div className="flex items-center gap-3 mb-4">
+            {form.avatarUrl ? (
+              <img
+                src={form.avatarUrl}
+                alt={me?.name || "User"}
+                className="h-16 w-16 rounded-full object-cover border border-gray-200"
+              />
+            ) : (
+              <div className="h-16 w-16 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-500 font-semibold">
+                {(me?.name || decoded?.name || "U").slice(0, 1).toUpperCase()}
+              </div>
+            )}
+            <div>
+              <p className="text-sm text-gray-500">Customer since</p>
+              <p className="font-semibold">
+                {new Date(me?.createdAt || Date.now()).toLocaleDateString()}
+              </p>
+            </div>
+          </div>
           <div className="space-y-2 text-sm">
             <div>
               <p className="text-gray-500">Name</p>
@@ -162,6 +195,21 @@ export default function ProfilePage() {
               </div>
             </div>
 
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Profile picture URL
+              </label>
+              <input
+                type="url"
+                className="w-full p-2 border rounded-md"
+                value={form.avatarUrl}
+                onChange={(e) =>
+                  setForm((p) => ({ ...p, avatarUrl: e.target.value }))
+                }
+                placeholder="https://example.com/your-photo.jpg"
+              />
+            </div>
+
             <div className="border-t pt-4">
               <h3 className="font-semibold mb-2">Change password (optional)</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -201,6 +249,34 @@ export default function ProfilePage() {
             </button>
           </form>
         </div>
+      </div>
+
+      <div className="mt-10 bg-white rounded-lg shadow-md p-6 border border-gray-100">
+        <h2 className="text-xl font-semibold mb-4">Purchase History</h2>
+        {orders.length === 0 ? (
+          <p className="text-gray-600">No purchases yet. Start exploring our plants.</p>
+        ) : (
+          <div className="space-y-3">
+            {orders.slice(0, 6).map((order) => (
+              <div
+                key={order._id}
+                className="border rounded-lg p-4 flex items-center justify-between"
+              >
+                <div>
+                  <p className="font-semibold">Order #{order._id.slice(-8)}</p>
+                  <p className="text-sm text-gray-600">
+                    {new Date(order.createdAt).toLocaleDateString()} |{" "}
+                    {order.products?.length || 0} items
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="font-semibold">AED {order.totalPrice?.toFixed(2)}</p>
+                  <p className="text-xs text-gray-500">{order.status}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

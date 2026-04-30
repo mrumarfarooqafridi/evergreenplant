@@ -105,3 +105,72 @@ exports.toggleUserBlock = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+exports.getBlogsAdmin = async (req, res) => {
+  try {
+    if (req.useFileDatabase) {
+      const blogs = await req.fileDatabase.getBlogs();
+      return res.json({ blogs });
+    }
+    return res.json({ blogs: [] });
+  } catch (err) {
+    console.error("Get blogs admin error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.createBlog = async (req, res) => {
+  try {
+    const { title, excerpt, content, image, category } = req.body;
+    if (!title || !content) {
+      return res.status(400).json({ message: "Title and content are required" });
+    }
+
+    if (req.useFileDatabase) {
+      const blog = await req.fileDatabase.createBlog({
+        title,
+        excerpt: excerpt || content.slice(0, 140),
+        content,
+        image: image || "/plant-placeholder.svg",
+        category: category || "General",
+        author: req.user.name || "Admin",
+      });
+      return res.status(201).json(blog);
+    }
+
+    return res.status(501).json({ message: "Blog admin is not configured in Mongo mode yet" });
+  } catch (err) {
+    console.error("Create blog error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.updateBlog = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (req.useFileDatabase) {
+      const blog = await req.fileDatabase.updateBlog(id, req.body);
+      if (!blog) return res.status(404).json({ message: "Blog not found" });
+      return res.json(blog);
+    }
+    return res.status(501).json({ message: "Blog admin is not configured in Mongo mode yet" });
+  } catch (err) {
+    console.error("Update blog error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.deleteBlog = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (req.useFileDatabase) {
+      const deleted = await req.fileDatabase.deleteBlog(id);
+      if (!deleted) return res.status(404).json({ message: "Blog not found" });
+      return res.json({ message: "Blog deleted" });
+    }
+    return res.status(501).json({ message: "Blog admin is not configured in Mongo mode yet" });
+  } catch (err) {
+    console.error("Delete blog error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};

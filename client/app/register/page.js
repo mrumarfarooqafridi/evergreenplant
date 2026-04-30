@@ -53,6 +53,7 @@ export default function Register() {
       );
 
       localStorage.setItem("token", response.data.token);
+      window.dispatchEvent(new Event("authChanged"));
       toast.success(
         response.data?.user?.name
           ? `Welcome to Evergreen, ${response.data.user.name}!`

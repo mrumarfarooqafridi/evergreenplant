@@ -36,12 +36,29 @@ exports.submitContact = async (req, res) => {
         message:
           "Your message has been sent successfully. We'll get back to you soon!",
       });
-    } else {
-      return res.status(500).json({
-        success: false,
-        message: emailResult.message || "Failed to send message",
+    }
+
+    // Professional fallback: if email auth fails, keep the lead safely stored.
+    if (req.useFileDatabase) {
+      await req.fileDatabase.saveContactMessage({
+        name,
+        email,
+        subject,
+        message,
+        deliveryStatus: "saved_without_email",
+        emailError: emailResult.message || "Email sending failed",
+      });
+      return res.status(200).json({
+        success: true,
+        message:
+          "Your message has been received and queued. Our team will contact you shortly.",
       });
     }
+
+    return res.status(500).json({
+      success: false,
+      message: emailResult.message || "Failed to send message",
+    });
   } catch (error) {
     console.error("Contact submission error:", error);
     return res.status(500).json({

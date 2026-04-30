@@ -75,6 +75,8 @@ const connectDB = async () => {
   app.use("/api/orders", require("./routes/orders"));
   app.use("/api/contact", require("./routes/contact"));
   app.use("/api/admin", require("./routes/admin"));
+  app.use("/api/blogs", require("./routes/blogs"));
+  app.use("/api/reviews", require("./routes/reviews"));
 
   // Health check route
   app.get("/api/health", (req, res) => {

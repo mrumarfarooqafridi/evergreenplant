@@ -5,6 +5,7 @@ server/node_modules/
 
 # Next.js build output
 .next/
+client/.next/
 out/
 
 # Logs

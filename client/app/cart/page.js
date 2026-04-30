@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { FaTrash } from "react-icons/fa";
+import { FiShoppingBag } from "react-icons/fi";
 
 export default function Cart() {
   const [cart, setCart] = useState([]);
@@ -42,14 +43,19 @@ export default function Cart() {
 
   if (cart.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-8 text-center">
-        <h1 className="text-3xl font-bold mb-4">Your Cart is Empty</h1>
-        <p className="text-gray-600 mb-8">
-          Add some beautiful plants to your cart!
-        </p>
-        <Link href="/products" className="btn-primary">
-          Shop Plants
-        </Link>
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-2xl mx-auto text-center bg-white border border-gray-100 rounded-2xl shadow-sm p-10">
+          <div className="h-16 w-16 mx-auto rounded-full bg-green-50 text-primary flex items-center justify-center mb-5">
+            <FiShoppingBag className="text-2xl" />
+          </div>
+          <h1 className="text-3xl font-bold mb-3">Your cart is currently empty</h1>
+          <p className="text-gray-600 mb-8">
+            Looks like you have not added any plants yet. Explore our curated collection and bring nature home.
+          </p>
+          <Link href="/products" className="btn-primary">
+            Browse Plants
+          </Link>
+        </div>
       </div>
     );
   }
@@ -61,10 +67,7 @@ export default function Cart() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           {cart.map((item, index) => (
-            <div
-              key={index}
-              className="flex items-center gap-4 bg-white p-4 rounded-lg shadow-md mb-4"
-            >
+            <div key={index} className="flex items-center gap-4 bg-white p-4 rounded-lg shadow-md mb-4 border border-gray-100">
               <Image
                 src={item.product.images[0] || "/placeholder.jpg"}
                 alt={item.product.name}
@@ -111,7 +114,7 @@ export default function Cart() {
           ))}
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md h-fit">
+        <div className="bg-white p-6 rounded-lg shadow-md h-fit border border-gray-100">
           <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
 
           <div className="flex justify-between mb-2">

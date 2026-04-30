@@ -9,6 +9,9 @@ class FileDatabase {
     this.usersFile = path.join(this.dataDir, "users.json");
     this.productsFile = path.join(this.dataDir, "products.json");
     this.ordersFile = path.join(this.dataDir, "orders.json");
+    this.blogsFile = path.join(this.dataDir, "blogs.json");
+    this.reviewsFile = path.join(this.dataDir, "reviews.json");
+    this.contactsFile = path.join(this.dataDir, "contacts.json");
     this.initialized = false;
   }
 
@@ -22,6 +25,9 @@ class FileDatabase {
       await this.ensureFile(this.usersFile, []);
       await this.ensureFile(this.productsFile, []);
       await this.ensureFile(this.ordersFile, []);
+      await this.ensureFile(this.blogsFile, []);
+      await this.ensureFile(this.reviewsFile, []);
+      await this.ensureFile(this.contactsFile, []);
 
       // Seed initial data
       await this.seedInitialData();
@@ -57,6 +63,7 @@ class FileDatabase {
         email: "admin@evergreen.com",
         password: hashedPassword,
         role: "admin",
+        avatarUrl: "",
         isBlocked: false,
         wishlist: [],
         createdAt: new Date().toISOString(),
@@ -376,6 +383,82 @@ class FileDatabase {
 
   async getUserOrders(userId) {
     return this.getOrders(userId, { admin: false });
+  }
+
+  // Blog operations
+  async getBlogs() {
+    const blogs = await this.readData(this.blogsFile);
+    return blogs.sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+  }
+
+  async createBlog(blogData) {
+    const blogs = await this.readData(this.blogsFile);
+    const newBlog = {
+      _id: this.generateId(),
+      ...blogData,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    blogs.push(newBlog);
+    await this.writeData(this.blogsFile, blogs);
+    return newBlog;
+  }
+
+  async updateBlog(id, updateData) {
+    const blogs = await this.readData(this.blogsFile);
+    const idx = blogs.findIndex((b) => b._id === id);
+    if (idx === -1) return null;
+    blogs[idx] = {
+      ...blogs[idx],
+      ...Object.fromEntries(
+        Object.entries(updateData).filter(([, v]) => v !== undefined),
+      ),
+      updatedAt: new Date().toISOString(),
+    };
+    await this.writeData(this.blogsFile, blogs);
+    return blogs[idx];
+  }
+
+  async deleteBlog(id) {
+    const blogs = await this.readData(this.blogsFile);
+    const filtered = blogs.filter((b) => b._id !== id);
+    await this.writeData(this.blogsFile, filtered);
+    return filtered.length !== blogs.length;
+  }
+
+  // Review operations
+  async getReviews() {
+    const reviews = await this.readData(this.reviewsFile);
+    return reviews.sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+  }
+
+  async createReview(reviewData) {
+    const reviews = await this.readData(this.reviewsFile);
+    const review = {
+      _id: this.generateId(),
+      ...reviewData,
+      createdAt: new Date().toISOString(),
+    };
+    reviews.push(review);
+    await this.writeData(this.reviewsFile, reviews);
+    return review;
+  }
+
+  // Contact fallback storage
+  async saveContactMessage(messageData) {
+    const messages = await this.readData(this.contactsFile);
+    const newMessage = {
+      _id: this.generateId(),
+      ...messageData,
+      createdAt: new Date().toISOString(),
+    };
+    messages.push(newMessage);
+    await this.writeData(this.contactsFile, messages);
+    return newMessage;
   }
 }
 

@@ -163,6 +163,7 @@ export default function Admin() {
               { href: "/admin/products", label: "Manage Products" },
               { href: "/admin/orders", label: "Manage Orders" },
               { href: "/admin/users", label: "Manage Users" },
+              { href: "/admin/blogs", label: "Manage Blogs" },
             ].map((action) => (
               <motion.div key={action.href} whileHover={{ x: 5 }}>
                 <Link

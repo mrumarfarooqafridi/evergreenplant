@@ -6,7 +6,13 @@ const { sendPasswordResetOtp } = require("../utils/emailService");
 
 const createToken = (user) =>
   jwt.sign(
-    { id: user._id, role: user.role, name: user.name, email: user.email },
+    {
+      id: user._id,
+      role: user.role,
+      name: user.name,
+      email: user.email,
+      avatarUrl: user.avatarUrl || "",
+    },
     process.env.JWT_SECRET,
     { expiresIn: "7d" },
   );
@@ -35,6 +41,7 @@ exports.register = async (req, res) => {
         email,
         password: hashedPassword,
         role: "user",
+        avatarUrl: "",
         isBlocked: false,
         wishlist: [],
       });
@@ -56,6 +63,7 @@ exports.register = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        avatarUrl: user.avatarUrl || "",
       },
     });
   } catch (err) {
@@ -97,6 +105,7 @@ exports.login = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        avatarUrl: user.avatarUrl || "",
       },
     });
   } catch (err) {
@@ -125,7 +134,7 @@ exports.me = async (req, res) => {
 
 exports.updateMe = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, avatarUrl } = req.body;
 
     let updated;
     if (req.useFileDatabase) {
@@ -141,6 +150,7 @@ exports.updateMe = async (req, res) => {
       updated = await req.fileDatabase.updateUserInternal(req.user.id, {
         name,
         email,
+        avatarUrl,
         ...(passwordToSave ? { password: passwordToSave } : {}),
       });
       const { password: _, ...withoutPassword } = updated;
@@ -156,6 +166,7 @@ exports.updateMe = async (req, res) => {
       if (!user) return res.status(404).json({ message: "User not found" });
       if (name !== undefined) user.name = name;
       if (email !== undefined) user.email = email;
+      if (avatarUrl !== undefined) user.avatarUrl = avatarUrl;
       if (update.password) user.password = update.password;
       await user.save();
       updated = await User.findById(req.user.id).select("-password");

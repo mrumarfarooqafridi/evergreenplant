@@ -162,6 +162,7 @@ export default function Footer() {
                 { href: "/products", label: "Products" },
                 { href: "/about", label: "About Us" },
                 { href: "/blog", label: "Blog" },
+                { href: "/reviews", label: "Reviews" },
                 { href: "/contact", label: "Contact" },
               ].map((item) => (
                 <li key={item.href}>
@@ -191,7 +192,7 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3">
               {[
-                { href: "/orders", label: "Track Order" },
+                { href: "/track-order", label: "Track Order" },
                 { href: "/returns", label: "Returns & Exchanges" },
                 { href: "/faq", label: "FAQ" },
                 { href: "/support", label: "Support" },

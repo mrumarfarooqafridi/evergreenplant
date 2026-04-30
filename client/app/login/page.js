@@ -29,6 +29,7 @@ export default function Login() {
         formData,
       );
       localStorage.setItem("token", response.data.token);
+      window.dispatchEvent(new Event("authChanged"));
       toast.success(
         response.data?.user?.name
           ? `Welcome back, ${response.data.user.name}!`
