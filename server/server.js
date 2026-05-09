@@ -5,38 +5,22 @@ const fs = require("fs");
 // Load .env FIRST before any other requires that need env vars
 dotenv.config({ path: path.join(__dirname, ".env") });
 
-// Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, "uploads");
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+// Ensure uploads directory exists only when NOT on Vercel (writable filesystem only)
+const isVercel = process.env.VERCEL || process.env.NOW_REGION;
+if (!isVercel) {
+  const uploadsDir = path.join(__dirname, "uploads");
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
 }
 
 const express = require("express");
 const cors = require("cors");
-const cloudinary = require("cloudinary").v2;
 const { db, auth } = require("./firebase");
-
-console.log("📋 Environment Configuration:");
-console.log(
-  "  - FIREBASE_PROJECT_ID:",
-  process.env.FIREBASE_PROJECT_ID ? "✓ Set" : "✗ Missing",
-);
-console.log(
-  "  - CLOUDINARY_CLOUD_NAME:",
-  process.env.CLOUDINARY_CLOUD_NAME || "✗ Missing",
-);
-console.log("  - EMAIL_USER:", process.env.EMAIL_USER || "✗ Missing");
-
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
 const app = express();
 
-// Middleware
+// CORS
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
@@ -46,7 +30,6 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (mobile apps, curl, Postman)
       if (!origin) return callback(null, true);
       if (
         allowedOrigins.includes(origin) ||
@@ -55,23 +38,26 @@ app.use(
       ) {
         return callback(null, true);
       }
-      callback(null, true); // Allow all for now — tighten after go-live
+      callback(null, true);
     },
     credentials: true,
-  }),
+  })
 );
+
 app.use(express.json({ limit: "20mb" }));
 app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 
-// Make Firebase available to routes
+// Make Firebase available to all routes
 app.use((req, res, next) => {
   req.db = db;
   req.auth = auth;
   next();
 });
 
-// Serve uploaded product images as static files
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// Serve uploaded images as static files (local dev only — Vercel filesystem is read-only)
+if (!isVercel) {
+  app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+}
 
 // Routes
 app.use("/api/auth", require("./routes/auth"));
@@ -83,7 +69,7 @@ app.use("/api/admin", require("./routes/admin"));
 app.use("/api/blogs", require("./routes/blogs"));
 app.use("/api/reviews", require("./routes/reviews"));
 
-// Health check route
+// Health check
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     status: "OK",
@@ -94,60 +80,37 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// Basic route
+// Root
 app.get("/", (req, res) => {
   res.json({
     message: "Evergreen Plant Nursery API",
     version: "2.0.0",
     status: "Running",
-    database: "Firebase Firestore",
-    endpoints: {
-      auth: "/api/auth",
-      products: "/api/products",
-      orders: "/api/orders",
-      health: "/api/health",
-    },
   });
 });
 
-// Error handling middleware
+// Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
     message: "Something went wrong!",
-    error:
-      process.env.NODE_ENV === "development"
-        ? err.message
-        : "Internal server error",
+    error: process.env.NODE_ENV === "development" ? err.message : "Internal server error",
   });
 });
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({
-    message: "Route not found",
-    path: req.path,
-    method: req.method,
+  res.status(404).json({ message: "Route not found", path: req.path });
+});
+
+// Only call app.listen() in local development — Vercel handles this itself
+if (!isVercel) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`🔗 Health: http://localhost:${PORT}/api/health`);
   });
-});
+}
 
-const PORT = process.env.PORT || 5000;
-
-const server = app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📊 Database: Firebase Firestore`);
-  console.log(
-    `📱 Frontend URL: ${process.env.NODE_ENV === "production" ? "https://evergreen-nursery.ae" : "http://localhost:3001"}`,
-  );
-  console.log(`🔗 API Health Check: http://localhost:${PORT}/api/health`);
-});
-
-// Handle unhandled promise rejections
-process.on("unhandledRejection", (err, promise) => {
-  console.log(`Error: ${err.message}`);
-  server.close(() => {
-    process.exit(1);
-  });
-});
-
+// Export the app for Vercel serverless functions
 module.exports = app;
