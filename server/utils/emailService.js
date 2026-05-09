@@ -10,6 +10,9 @@ const transporter = nodemailer.createTransport({
     user: emailUser,
     pass: emailPass,
   },
+  tls: {
+    rejectUnauthorized: false,
+  },
 });
 
 // Send contact form email

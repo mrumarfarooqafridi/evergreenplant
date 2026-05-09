@@ -1,5 +1,5 @@
-const Product = require("../models/Product");
 const cloudinary = require("cloudinary").v2;
+const { COLLECTIONS, admin } = require("../firebase");
 
 // Helper function to extract public_id from Cloudinary URL
 const getPublicIdFromUrl = (url) => {
@@ -31,70 +31,69 @@ exports.getProducts = async (req, res) => {
       maxPrice,
       search,
     } = req.query;
+    const { db } = req;
 
-    let result;
-    if (req.useFileDatabase) {
-      const query = {};
-      if (category) query.category = category;
-      if (minPrice) query.minPrice = parseFloat(minPrice);
-      if (maxPrice) query.maxPrice = parseFloat(maxPrice);
-      if (search) query.search = search;
+    let query = db.collection(COLLECTIONS.PRODUCTS);
 
-      const options = { limit: parseInt(limit), page: parseInt(page) };
-      result = await req.fileDatabase.getProducts(query, options);
-    } else {
-      let query = {};
-
-      if (category) query.category = category;
-      if (minPrice || maxPrice) {
-        query.price = {};
-        if (minPrice) query.price.$gte = minPrice;
-        if (maxPrice) query.price.$lte = maxPrice;
-      }
-      if (search) {
-        query.$or = [
-          { name: { $regex: search, $options: "i" } },
-          { description: { $regex: search, $options: "i" } },
-        ];
-      }
-
-      const products = await Product.find(query)
-        .limit(limit * 1)
-        .skip((page - 1) * limit)
-        .sort({ createdAt: -1 });
-
-      const total = await Product.countDocuments(query);
-
-      result = {
-        products,
-        totalPages: Math.ceil(total / limit),
-        currentPage: page,
-      };
+    // Apply filters
+    if (category) {
+      query = query.where("category", "==", category);
+    }
+    if (minPrice) {
+      query = query.where("price", ">=", parseFloat(minPrice));
+    }
+    if (maxPrice) {
+      query = query.where("price", "<=", parseFloat(maxPrice));
     }
 
-    res.json(result);
+    // Get all products (Firestore doesn't have built-in pagination like MongoDB)
+    const snapshot = await query.orderBy("createdAt", "desc").get();
+    let products = [];
+
+    snapshot.forEach((doc) => {
+      products.push({ _id: doc.id, id: doc.id, ...doc.data() });
+    });
+
+    // Apply search filter in memory (Firestore doesn't support regex)
+    if (search) {
+      const searchLower = search.toLowerCase();
+      products = products.filter(
+        (product) =>
+          product.name?.toLowerCase().includes(searchLower) ||
+          product.description?.toLowerCase().includes(searchLower),
+      );
+    }
+
+    // Apply pagination in memory
+    const total = products.length;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + parseInt(limit);
+    const paginatedProducts = products.slice(startIndex, endIndex);
+
+    res.json({
+      products: paginatedProducts,
+      totalPages: Math.ceil(total / limit),
+      currentPage: parseInt(page),
+      total,
+    });
   } catch (err) {
     console.error("Get products error:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
 exports.getProduct = async (req, res) => {
   try {
     const { id } = req.params;
+    const { db } = req;
 
-    let product;
-    if (req.useFileDatabase) {
-      product = await req.fileDatabase.getProduct(id);
-    } else {
-      product = await Product.findById(id);
-    }
+    const doc = await db.collection(COLLECTIONS.PRODUCTS).doc(id).get();
 
-    if (!product) {
+    if (!doc.exists) {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    res.json(product);
+    res.json({ _id: doc.id, id: doc.id, ...doc.data() });
   } catch (err) {
     console.error("Get product error:", err);
     res.status(500).json({ message: "Server error" });
@@ -103,7 +102,8 @@ exports.getProduct = async (req, res) => {
 
 exports.createProduct = async (req, res) => {
   try {
-    const { name, description, price, category, stock } = req.body;
+    const { name, description, price, category, stock, featured } = req.body;
+    const { db } = req;
 
     let images = [];
     if (req.files && req.files.length > 0) {
@@ -122,28 +122,34 @@ exports.createProduct = async (req, res) => {
       category,
       stock: parseInt(stock),
       images,
+      featured: featured || false,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
-    let product;
-    if (req.useFileDatabase) {
-      product = await req.fileDatabase.createProduct(productData);
-    } else {
-      product = new Product(productData);
-      await product.save();
-    }
+    const docRef = await db.collection(COLLECTIONS.PRODUCTS).add(productData);
+    const product = { _id: docRef.id, id: docRef.id, ...productData };
 
     res.status(201).json(product);
   } catch (err) {
     console.error("Create product error:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
 exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, price, category, stock, existingImages } =
-      req.body;
+    const {
+      name,
+      description,
+      price,
+      category,
+      stock,
+      featured,
+      existingImages,
+    } = req.body;
+    const { db } = req;
 
     // Normalize existingImages so single values and arrays both work
     const imagesFromRequest = Array.isArray(existingImages)
@@ -153,16 +159,13 @@ exports.updateProduct = async (req, res) => {
         : [];
 
     // Get existing product to delete old images
-    let existingProduct;
-    if (req.useFileDatabase) {
-      existingProduct = await req.fileDatabase.getProduct(id);
-    } else {
-      existingProduct = await Product.findById(id);
-    }
+    const doc = await db.collection(COLLECTIONS.PRODUCTS).doc(id).get();
 
-    if (!existingProduct) {
+    if (!doc.exists) {
       return res.status(404).json({ message: "Product not found" });
     }
+
+    const existingProduct = doc.data();
 
     // Handle image updates
     let images = imagesFromRequest;
@@ -193,50 +196,41 @@ exports.updateProduct = async (req, res) => {
       price: parseFloat(price),
       category,
       stock: parseInt(stock),
+      featured: featured !== undefined ? featured : existingProduct.featured,
       images,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
-    let product;
-    if (req.useFileDatabase) {
-      product = await req.fileDatabase.updateProduct(id, updateData);
-    } else {
-      product = await Product.findByIdAndUpdate(id, updateData, { new: true });
-    }
+    await db.collection(COLLECTIONS.PRODUCTS).doc(id).update(updateData);
 
-    res.json(product);
+    const updatedDoc = await db.collection(COLLECTIONS.PRODUCTS).doc(id).get();
+    res.json({ _id: updatedDoc.id, id: updatedDoc.id, ...updatedDoc.data() });
   } catch (err) {
     console.error("Update product error:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
 exports.deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
+    const { db } = req;
 
-    let product;
-    if (req.useFileDatabase) {
-      product = await req.fileDatabase.getProduct(id);
-      if (product) {
-        // Delete images from Cloudinary
-        if (product.images && product.images.length > 0) {
-          await deleteImagesFromCloudinary(product.images);
-        }
-        // Remove from file database
-        await req.fileDatabase.deleteProduct(id);
-        res.json({ message: "Product deleted successfully" });
-        return;
-      }
-    } else {
-      product = await Product.findByIdAndDelete(id);
-      if (product && product.images && product.images.length > 0) {
-        await deleteImagesFromCloudinary(product.images);
-      }
-    }
+    const doc = await db.collection(COLLECTIONS.PRODUCTS).doc(id).get();
 
-    if (!product) {
+    if (!doc.exists) {
       return res.status(404).json({ message: "Product not found" });
     }
+
+    const product = doc.data();
+
+    // Delete images from Cloudinary
+    if (product.images && product.images.length > 0) {
+      await deleteImagesFromCloudinary(product.images);
+    }
+
+    // Delete from Firestore
+    await db.collection(COLLECTIONS.PRODUCTS).doc(id).delete();
 
     res.json({ message: "Product deleted successfully" });
   } catch (err) {

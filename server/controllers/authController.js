@@ -1,13 +1,13 @@
-const User = require("../models/User");
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const { sendPasswordResetOtp } = require("../utils/emailService");
+const OTPService = require("../utils/otpService");
+const { COLLECTIONS, admin } = require("../firebase");
 
 const createToken = (user) =>
   jwt.sign(
     {
-      id: user._id,
+      id: user.id,
       role: user.role,
       name: user.name,
       email: user.email,
@@ -20,94 +20,154 @@ const createToken = (user) =>
 exports.register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    const { db, auth } = req;
 
-    let user;
-    if (req.useFileDatabase) {
-      user = await req.fileDatabase.findUser({ email });
-    } else {
-      user = await User.findOne({ email });
+    console.log("Registration attempt:", { name, email });
+
+    // Validate input
+    if (!name || !email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Name, email, and password are required" });
     }
 
-    if (user) {
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters" });
+    }
+
+    // Check if user already exists in Firebase Auth
+    try {
+      const existingUser = await auth.getUserByEmail(email);
+      console.log("User already exists:", existingUser.uid);
       return res.status(400).json({ message: "User already exists" });
+    } catch (error) {
+      if (error.code !== "auth/user-not-found") {
+        console.error("Error checking user existence:", error);
+        throw error;
+      }
+      console.log("User does not exist, proceeding with registration");
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    // Create user in Firebase Auth
+    console.log("Creating user in Firebase Auth...");
+    const userRecord = await auth.createUser({
+      email,
+      password,
+      displayName: name,
+    });
+    console.log("User created in Firebase Auth:", userRecord.uid);
 
-    if (req.useFileDatabase) {
-      user = await req.fileDatabase.createUser({
-        name,
-        email,
-        password: hashedPassword,
-        role: "user",
-        avatarUrl: "",
-        isBlocked: false,
-        wishlist: [],
-      });
-    } else {
-      user = new User({
-        name,
-        email,
-        password: hashedPassword,
-      });
-      await user.save();
-    }
+    // Store additional user data in Firestore
+    const userData = {
+      id: userRecord.uid,
+      email: userRecord.email,
+      name: name,
+      username: email.split("@")[0],
+      role: "user",
+      avatarUrl: "",
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    };
 
-    const token = createToken(user);
+    console.log("Storing user data in Firestore...");
+    await db.collection(COLLECTIONS.USERS).doc(userRecord.uid).set(userData);
+    console.log("User data stored in Firestore");
+
+    const token = createToken(userData);
 
     res.status(201).json({
       token,
       user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        avatarUrl: user.avatarUrl || "",
+        id: userData.id,
+        name: userData.name,
+        email: userData.email,
+        role: userData.role,
+        avatarUrl: userData.avatarUrl || "",
       },
     });
   } catch (err) {
     console.error("Registration error:", err);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error code:", err.code);
+    console.error("Error message:", err.message);
+    res
+      .status(500)
+      .json({ message: "Server error", error: err.message, code: err.code });
   }
 };
 
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const { db, auth } = req;
 
-    let user;
-    if (req.useFileDatabase) {
-      user = await req.fileDatabase.findUser({ email });
-    } else {
-      user = await User.findOne({ email });
+    // Sign in with Firebase Auth
+    let userRecord;
+    try {
+      userRecord = await auth.getUserByEmail(email);
+    } catch (error) {
+      if (error.code === "auth/user-not-found") {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+      throw error;
     }
 
-    if (!user) {
+    // Verify password by attempting to sign in using Firebase Auth REST API
+    try {
+      const apiKey = process.env.FIREBASE_API_KEY;
+      if (!apiKey) {
+        console.error("FIREBASE_API_KEY is missing from environment variables.");
+        return res.status(500).json({ message: "Server configuration error" });
+      }
+
+      const verifyResponse = await fetch(
+        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            password,
+            returnSecureToken: true,
+          }),
+        }
+      );
+
+      const verifyData = await verifyResponse.json();
+
+      if (!verifyResponse.ok) {
+        console.error("Firebase REST API Error:", verifyData.error?.message);
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+
+      // Fetch user data from Firestore
+      const userDoc = await db
+        .collection(COLLECTIONS.USERS)
+        .doc(userRecord.uid)
+        .get();
+
+      if (!userDoc.exists) {
+        return res.status(400).json({ message: "User data not found" });
+      }
+
+      const userData = userDoc.data();
+
+      const token = createToken(userData);
+
+      res.json({
+        token,
+        user: {
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+          role: userData.role,
+          avatarUrl: userData.avatarUrl || "",
+        },
+      });
+    } catch (error) {
+      console.error("Login error:", error);
       return res.status(400).json({ message: "Invalid credentials" });
     }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-
-    if (user.isBlocked) {
-      return res.status(403).json({ message: "Account is blocked" });
-    }
-
-    const token = createToken(user);
-
-    res.json({
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        avatarUrl: user.avatarUrl || "",
-      },
-    });
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ message: "Server error" });
@@ -116,16 +176,17 @@ exports.login = async (req, res) => {
 
 exports.me = async (req, res) => {
   try {
-    if (req.useFileDatabase) {
-      const user = await req.fileDatabase.getUserById(req.user.id);
-      if (!user) return res.status(404).json({ message: "User not found" });
-      const { password, ...withoutPassword } = user;
-      return res.json(withoutPassword);
+    const { db } = req;
+    const userDoc = await db
+      .collection(COLLECTIONS.USERS)
+      .doc(req.user.id)
+      .get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ message: "User not found" });
     }
 
-    const user = await User.findById(req.user.id).select("-password");
-    if (!user) return res.status(404).json({ message: "User not found" });
-    res.json(user);
+    res.json(userDoc.data());
   } catch (err) {
     console.error("Me error:", err);
     res.status(500).json({ message: "Server error" });
@@ -135,44 +196,45 @@ exports.me = async (req, res) => {
 exports.updateMe = async (req, res) => {
   try {
     const { name, email, password, avatarUrl } = req.body;
+    const { db, auth } = req;
 
-    let updated;
-    if (req.useFileDatabase) {
-      const existing = await req.fileDatabase.getUserById(req.user.id);
-      if (!existing) return res.status(404).json({ message: "User not found" });
+    const userRef = db.collection(COLLECTIONS.USERS).doc(req.user.id);
+    const userDoc = await userRef.get();
 
-      let passwordToSave;
-      if (password) {
-        const salt = await bcrypt.genSalt(10);
-        passwordToSave = await bcrypt.hash(password, salt);
-      }
-
-      updated = await req.fileDatabase.updateUserInternal(req.user.id, {
-        name,
-        email,
-        avatarUrl,
-        ...(passwordToSave ? { password: passwordToSave } : {}),
-      });
-      const { password: _, ...withoutPassword } = updated;
-      updated = withoutPassword;
-    } else {
-      const update = { name, email };
-      if (password) {
-        const salt = await bcrypt.genSalt(10);
-        update.password = await bcrypt.hash(password, salt);
-      }
-
-      const user = await User.findById(req.user.id);
-      if (!user) return res.status(404).json({ message: "User not found" });
-      if (name !== undefined) user.name = name;
-      if (email !== undefined) user.email = email;
-      if (avatarUrl !== undefined) user.avatarUrl = avatarUrl;
-      if (update.password) user.password = update.password;
-      await user.save();
-      updated = await User.findById(req.user.id).select("-password");
+    if (!userDoc.exists) {
+      return res.status(404).json({ message: "User not found" });
     }
 
-    // Return a fresh token so header greeting updates immediately
+    const updateData = {};
+    if (name !== undefined) updateData.name = name;
+    if (email !== undefined) updateData.email = email;
+    if (avatarUrl !== undefined) updateData.avatarUrl = avatarUrl;
+
+    // Update in Firestore
+    await userRef.update(updateData);
+
+    // Update email in Firebase Auth if changed
+    if (email !== undefined) {
+      try {
+        await auth.updateUser(req.user.id, { email });
+      } catch (error) {
+        console.error("Error updating email in Firebase Auth:", error);
+      }
+    }
+
+    // Update password in Firebase Auth if provided
+    if (password !== undefined) {
+      try {
+        await auth.updateUser(req.user.id, { password });
+      } catch (error) {
+        console.error("Error updating password in Firebase Auth:", error);
+      }
+    }
+
+    // Get updated user data
+    const updatedDoc = await userRef.get();
+    const updated = updatedDoc.data();
+
     const token = createToken(updated);
     res.json({ token, user: updated });
   } catch (err) {
@@ -186,44 +248,51 @@ exports.forgotPassword = async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ message: "Email is required" });
 
-    let user;
-    if (req.useFileDatabase) {
-      user = await req.fileDatabase.findUser({ email });
-    } else {
-      user = await User.findOne({ email });
+    const { db, auth } = req;
+
+    // Check if user exists
+    let userRecord;
+    try {
+      userRecord = await auth.getUserByEmail(email);
+    } catch (error) {
+      if (error.code === "auth/user-not-found") {
+        return res.json({
+          message: "If the email exists, an OTP has been sent.",
+        });
+      }
+      throw error;
     }
 
-    // Don't reveal whether the email exists (professional behavior)
-    if (!user) {
-      return res.json({ message: "If the email exists, an OTP has been sent." });
+    // Get user data from Firestore
+    const userRef = db.collection(COLLECTIONS.USERS).doc(userRecord.uid);
+    const userDoc = await userRef.get();
+    const userData = userDoc.data();
+
+    // Use the OTP service
+    const otpResult = await OTPService.sendOTP(
+      email,
+      userData.name,
+      userRecord.uid,
+    );
+
+    if (!otpResult.success) {
+      return res.status(500).json({ message: otpResult.message });
     }
 
-    const otp = (Math.floor(100000 + Math.random() * 900000)).toString();
+    // Store OTP in Firestore
+    const otp = OTPService.getDevelopmentOTP(email);
     const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
-    const otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+    const otpExpires = Date.now() + 60 * 1000; // 60 seconds
 
-    if (req.useFileDatabase) {
-      await req.fileDatabase.updateUserInternal(user._id, {
-        resetOtpHash: otpHash,
-        resetOtpExpires: otpExpires,
-      });
-    } else {
-      user.resetOtpHash = otpHash;
-      user.resetOtpExpires = otpExpires;
-      await user.save();
-    }
-
-    const emailResult = await sendPasswordResetOtp({
-      to: email,
-      name: user.name,
-      otp,
+    await userRef.update({
+      resetOtpHash: otpHash,
+      resetOtpExpires: otpExpires,
     });
 
-    if (!emailResult.success) {
-      return res.status(500).json({ message: emailResult.message });
-    }
-
-    res.json({ message: "If the email exists, an OTP has been sent." });
+    res.json({
+      message: "If the email exists, an OTP has been sent.",
+      developmentMode: otpResult.developmentMode || false,
+    });
   } catch (err) {
     console.error("Forgot password error:", err);
     res.status(500).json({ message: "Server error" });
@@ -244,42 +313,44 @@ exports.resetPassword = async (req, res) => {
         .json({ message: "Password must be at least 6 characters long" });
     }
 
-    let user;
-    if (req.useFileDatabase) {
-      user = await req.fileDatabase.findUser({ email });
-    } else {
-      user = await User.findOne({ email });
+    const { db, auth } = req;
+
+    // Get user from Firebase Auth
+    let userRecord;
+    try {
+      userRecord = await auth.getUserByEmail(email);
+    } catch (error) {
+      if (error.code === "auth/user-not-found") {
+        return res.status(400).json({ message: "Invalid OTP or expired" });
+      }
+      throw error;
     }
 
-    if (!user) {
-      return res.status(400).json({ message: "Invalid OTP or expired" });
-    }
+    // Get user data from Firestore
+    const userRef = db.collection(COLLECTIONS.USERS).doc(userRecord.uid);
+    const userDoc = await userRef.get();
+    const userData = userDoc.data();
 
+    // Verify OTP
     const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
-    const expires =
-      req.useFileDatabase ? user.resetOtpExpires : user.resetOtpExpires;
-    const savedHash =
-      req.useFileDatabase ? user.resetOtpHash : user.resetOtpHash;
 
-    if (!savedHash || !expires || Date.now() > Number(expires) || savedHash !== otpHash) {
+    if (
+      !userData.resetOtpHash ||
+      !userData.resetOtpExpires ||
+      Date.now() > Number(userData.resetOtpExpires) ||
+      userData.resetOtpHash !== otpHash
+    ) {
       return res.status(400).json({ message: "Invalid OTP or expired" });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    // Update password in Firebase Auth
+    await auth.updateUser(userRecord.uid, { password: newPassword });
 
-    if (req.useFileDatabase) {
-      await req.fileDatabase.updateUserInternal(user._id, {
-        password: hashedPassword,
-        resetOtpHash: null,
-        resetOtpExpires: null,
-      });
-    } else {
-      user.password = hashedPassword;
-      user.resetOtpHash = null;
-      user.resetOtpExpires = null;
-      await user.save();
-    }
+    // Clear OTP from Firestore
+    await userRef.update({
+      resetOtpHash: null,
+      resetOtpExpires: null,
+    });
 
     res.json({ message: "Password reset successfully" });
   } catch (err) {

@@ -1,4 +1,13 @@
 User-agent: *
 Allow: /
+Crawl-delay: 1
+
+# Block common bot paths
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /checkout/
+Disallow: /profile/
+Disallow: /cart/
 
 Sitemap: https://evergreen-nursery.ae/sitemap.xml

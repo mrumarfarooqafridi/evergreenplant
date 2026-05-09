@@ -6,6 +6,15 @@ import Link from "next/link";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
+import {
+  ShoppingBag,
+  DollarSign,
+  Users,
+  Package,
+  FileText,
+  TrendingUp,
+  ArrowRight,
+} from "lucide-react";
 
 export default function Admin() {
   const [stats, setStats] = useState({
@@ -53,7 +62,6 @@ export default function Admin() {
       const usersResponse = usersRes;
       const users = usersResponse?.data?.users || [];
 
-      // Orders
       const orders = response.data;
       const totalRevenue = orders.reduce(
         (sum, order) => sum + order.totalPrice,
@@ -73,146 +81,245 @@ export default function Admin() {
     setLoading(false);
   };
 
-  const statVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.1,
-        duration: 0.6,
-      },
-    }),
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3,
-      },
+  const statCards = [
+    {
+      icon: <ShoppingBag className="w-8 h-8" />,
+      label: "Total Orders",
+      value: stats.totalOrders,
+      color: "from-blue-500 to-blue-600",
+      bgColor: "bg-blue-50",
     },
-  };
+    {
+      icon: <DollarSign className="w-8 h-8" />,
+      label: "Total Revenue",
+      value: `AED ${stats.totalRevenue.toFixed(2)}`,
+      color: "from-green-500 to-emerald-600",
+      bgColor: "bg-green-50",
+    },
+    {
+      icon: <Users className="w-8 h-8" />,
+      label: "Total Users",
+      value: stats.totalUsers,
+      color: "from-purple-500 to-purple-600",
+      bgColor: "bg-purple-50",
+    },
+    {
+      icon: <Package className="w-8 h-8" />,
+      label: "Recent Orders",
+      value: stats.recentOrders.length,
+      color: "from-orange-500 to-orange-600",
+      bgColor: "bg-orange-50",
+    },
+  ];
+
+  const quickActions = [
+    {
+      href: "/admin/products",
+      label: "Manage Products",
+      icon: <Package className="w-5 h-5" />,
+      color: "bg-green-500",
+    },
+    {
+      href: "/admin/orders",
+      label: "Manage Orders",
+      icon: <ShoppingBag className="w-5 h-5" />,
+      color: "bg-blue-500",
+    },
+    {
+      href: "/admin/users",
+      label: "Manage Users",
+      icon: <Users className="w-5 h-5" />,
+      color: "bg-purple-500",
+    },
+    {
+      href: "/admin/blogs",
+      label: "Manage Blogs",
+      icon: <FileText className="w-5 h-5" />,
+      color: "bg-orange-500",
+    },
+  ];
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          className="rounded-full h-12 w-12 border-b-2 border-primary"
-        ></motion.div>
+      <div className="flex justify-center items-center min-h-screen bg-gray-50">
+        <div className="text-center">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            className="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full mx-auto mb-4"
+          ></motion.div>
+          <p className="text-gray-600 font-medium">Loading dashboard...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <motion.h1
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="text-3xl font-bold mb-8"
-      >
-        Admin Dashboard
-      </motion.h1>
-
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-        className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8"
-      >
-        {[
-          { label: "Total Orders", value: stats.totalOrders },
-          {
-            label: "Total Revenue",
-            value: `AED ${stats.totalRevenue.toFixed(2)}`,
-          },
-          { label: "Total Users", value: stats.totalUsers },
-          { label: "Recent Orders", value: stats.recentOrders.length },
-        ].map((stat, i) => (
-          <motion.div
-            key={i}
-            custom={i}
-            variants={statVariants}
-            whileHover={{ y: -5 }}
-            className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-all"
-          >
-            <h3 className="text-lg font-semibold mb-2 text-gray-600">
-              {stat.label}
-            </h3>
-            <p className="text-3xl font-bold text-primary">{stat.value}</p>
-          </motion.div>
-        ))}
-      </motion.div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div className="p-4 lg:p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="bg-white p-6 rounded-lg shadow-md"
+          className="mb-8"
         >
-          <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-          <div className="space-y-3">
-            {[
-              { href: "/admin/products", label: "Manage Products" },
-              { href: "/admin/orders", label: "Manage Orders" },
-              { href: "/admin/users", label: "Manage Users" },
-              { href: "/admin/blogs", label: "Manage Blogs" },
-            ].map((action) => (
-              <motion.div key={action.href} whileHover={{ x: 5 }}>
-                <Link
-                  href={action.href}
-                  className="block btn-primary text-center transition-all"
-                >
-                  {action.label}
-                </Link>
-              </motion.div>
-            ))}
-          </div>
+          <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+            Welcome back, Admin
+          </h1>
+          <p className="text-gray-600">
+            Here's what's happening with your store today.
+          </p>
         </motion.div>
 
+        {/* Stats Grid */}
         <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="bg-white p-6 rounded-lg shadow-md"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.1 },
+            },
+          }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
         >
-          <h2 className="text-xl font-semibold mb-4">Recent Orders</h2>
-          <div className="space-y-3">
-            {stats.recentOrders.map((order) => (
-              <motion.div
-                key={order._id}
-                whileHover={{ x: 5 }}
-                className="flex justify-between items-center border-b pb-2"
+          {statCards.map((stat, index) => (
+            <motion.div
+              key={index}
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 },
+              }}
+              whileHover={{ y: -4 }}
+              className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all border border-gray-100"
+            >
+              <div
+                className={`w-14 h-14 ${stat.bgColor} rounded-xl flex items-center justify-center mb-4`}
               >
-                <div>
-                  <p className="font-semibold">Order #{order._id.slice(-8)}</p>
-                  <p className="text-sm text-gray-600">
-                    AED {order.totalPrice.toFixed(2)}
-                  </p>
-                </div>
-                <span
-                  className={`px-2 py-1 rounded text-sm ${
-                    order.status === "Pending"
-                      ? "bg-yellow-100 text-yellow-800"
-                      : order.status === "Delivered"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-blue-100 text-blue-800"
-                  }`}
+                <div
+                  className={`bg-gradient-to-br ${stat.color} text-white rounded-lg p-3`}
                 >
-                  {order.status}
-                </span>
-              </motion.div>
-            ))}
-          </div>
+                  {stat.icon}
+                </div>
+              </div>
+              <h3 className="text-sm font-medium text-gray-600 mb-1">
+                {stat.label}
+              </h3>
+              <p className="text-2xl lg:text-3xl font-bold text-gray-900">
+                {stat.value}
+              </p>
+            </motion.div>
+          ))}
         </motion.div>
+
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Quick Actions */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="lg:col-span-1"
+          >
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+              <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                <TrendingUp className="w-5 h-5 mr-2 text-green-600" />
+                Quick Actions
+              </h2>
+              <div className="space-y-3">
+                {quickActions.map((action) => (
+                  <motion.div
+                    key={action.href}
+                    whileHover={{ x: 4 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Link
+                      href={action.href}
+                      className="flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div
+                          className={`w-10 h-10 ${action.color} rounded-lg flex items-center justify-center text-white`}
+                        >
+                          {action.icon}
+                        </div>
+                        <span className="font-medium text-gray-900">
+                          {action.label}
+                        </span>
+                      </div>
+                      <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-green-600 transition-colors" />
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Recent Orders */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="lg:col-span-2"
+          >
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-900">
+                  Recent Orders
+                </h2>
+                <Link
+                  href="/admin/orders"
+                  className="text-green-600 hover:text-green-700 font-medium text-sm flex items-center"
+                >
+                  View All
+                  <ArrowRight className="w-4 h-4 ml-1" />
+                </Link>
+              </div>
+              <div className="space-y-4">
+                {stats.recentOrders.length > 0 ? (
+                  stats.recentOrders.map((order) => (
+                    <motion.div
+                      key={order._id}
+                      whileHover={{ x: 4 }}
+                      className="flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors"
+                    >
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white">
+                          <ShoppingBag className="w-6 h-6" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-900">
+                            Order #{order._id.slice(-8)}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            AED {order.totalPrice.toFixed(2)}
+                          </p>
+                        </div>
+                      </div>
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          order.status === "Pending"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : order.status === "Delivered"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-blue-100 text-blue-800"
+                        }`}
+                      >
+                        {order.status}
+                      </span>
+                    </motion.div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <ShoppingBag className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                    <p>No recent orders</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </div>
   );

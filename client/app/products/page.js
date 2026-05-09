@@ -5,16 +5,19 @@ import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
+import { Filter, X } from "lucide-react";
 import ProductFilters from "../../components/ProductFilters";
 import ProductPagination from "../../components/ProductPagination";
 import ProductCard from "../../components/ProductCard";
 import ProductModal from "../../components/ProductModal";
+import Modal from "../../components/ui/Modal";
 
 export default function Products() {
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState({
     category: "",
@@ -60,6 +63,7 @@ export default function Products() {
 
   const handleFilterSubmit = () => {
     fetchProducts();
+    setIsFilterModalOpen(false);
   };
 
   const handleResetFilters = () => {
@@ -135,21 +139,32 @@ export default function Products() {
         </p>
       </motion.div>
 
-      {/* Filters */}
-      <ProductFilters
-        filters={filters}
-        onFilterChange={handleFilterChange}
-        onFilterSubmit={handleFilterSubmit}
-        onReset={handleResetFilters}
-      />
+      {/* Filters - Hidden on mobile, shown in modal */}
+      <div className="hidden lg:block">
+        <ProductFilters
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onFilterSubmit={handleFilterSubmit}
+          onReset={handleResetFilters}
+        />
+      </div>
 
-      {/* Results Info */}
+      {/* Results Info & Mobile Filter Button */}
       <div className="mb-6 flex justify-between items-center flex-wrap gap-3">
         <p className="text-gray-600 font-medium">
           Showing {allProducts.length === 0 ? 0 : startIndex + 1}-
           {Math.min(endIndex, allProducts.length)} of {allProducts.length}{" "}
           products
         </p>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setIsFilterModalOpen(true)}
+          className="lg:hidden flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg font-semibold"
+        >
+          <Filter className="w-5 h-5" />
+          <span>Filters</span>
+        </motion.button>
       </div>
 
       {/* Products Grid */}
@@ -159,7 +174,7 @@ export default function Products() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-12"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12"
           >
             {currentProducts.map((product, index) => (
               <ProductCard
@@ -219,6 +234,21 @@ export default function Products() {
         }}
         onAddToCart={addToCart}
       />
+
+      {/* Mobile Filter Modal */}
+      <Modal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        title="Filter Products"
+        size="md"
+      >
+        <ProductFilters
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onFilterSubmit={handleFilterSubmit}
+          onReset={handleResetFilters}
+        />
+      </Modal>
     </div>
   );
 }

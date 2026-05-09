@@ -13,6 +13,11 @@ import {
   FaPhone,
   FaEnvelope,
   FaClock,
+  FaTruck,
+  FaUndo,
+  FaQuestionCircle,
+  FaHeadset,
+  FaBox,
 } from "react-icons/fa";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
@@ -104,8 +109,8 @@ export default function Footer() {
       )}
 
       {/* Main Footer Content */}
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="container mx-auto px-4 py-8 sm:py-12 md:py-16">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
           {/* Company Info */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -113,11 +118,13 @@ export default function Footer() {
             transition={{ duration: 0.6, delay: 0.1 }}
             viewport={{ once: true }}
           >
-            <div className="flex items-center space-x-2 mb-6">
-              <FaLeaf className="text-primary text-2xl" />
-              <h3 className="text-xl font-bold">Evergreen Nursery</h3>
+            <div className="flex items-center space-x-2 mb-4 sm:mb-6">
+              <FaLeaf className="text-primary text-lg sm:text-xl md:text-2xl" />
+              <h3 className="text-base sm:text-lg md:text-xl font-bold">
+                Evergreen Nursery
+              </h3>
             </div>
-            <p className="text-gray-300 mb-6 leading-relaxed">
+            <p className="text-gray-300 mb-4 sm:mb-6 leading-relaxed text-xs sm:text-sm md:text-base">
               Your trusted source for beautiful, healthy plants and expert
               gardening advice. Bringing nature closer to your home.
             </p>
@@ -153,7 +160,7 @@ export default function Footer() {
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            <h4 className="text-lg font-semibold mb-6 text-white">
+            <h4 className="text-sm sm:text-base md:text-lg font-semibold mb-4 sm:mb-6 text-white">
               Quick Links
             </h4>
             <ul className="space-y-3">
@@ -187,16 +194,20 @@ export default function Footer() {
             transition={{ duration: 0.6, delay: 0.3 }}
             viewport={{ once: true }}
           >
-            <h4 className="text-lg font-semibold mb-6 text-white">
+            <h4 className="text-sm sm:text-base md:text-lg font-semibold mb-4 sm:mb-6 text-white">
               Customer Service
             </h4>
             <ul className="space-y-3">
               {[
-                { href: "/track-order", label: "Track Order" },
-                { href: "/returns", label: "Returns & Exchanges" },
-                { href: "/faq", label: "FAQ" },
-                { href: "/support", label: "Support" },
-                { href: "/shipping", label: "Shipping Info" },
+                { href: "/track-order", label: "Track Order", icon: FaBox },
+                {
+                  href: "/returns",
+                  label: "Returns & Exchanges",
+                  icon: FaUndo,
+                },
+                { href: "/faq", label: "FAQ", icon: FaQuestionCircle },
+                { href: "/support", label: "Support", icon: FaHeadset },
+                { href: "/shipping", label: "Shipping Info", icon: FaTruck },
               ].map((item) => (
                 <li key={item.href}>
                   <motion.div whileHover={{ x: 5 }}>
@@ -204,7 +215,7 @@ export default function Footer() {
                       href={item.href}
                       className="text-gray-300 hover:text-primary transition-colors duration-300 flex items-center group"
                     >
-                      <span className="w-0 group-hover:w-2 h-0.5 bg-primary transition-all duration-300 mr-0 group-hover:mr-2"></span>
+                      <item.icon className="w-4 h-4 mr-2 text-primary/70 group-hover:text-primary transition-colors" />
                       {item.label}
                     </Link>
                   </motion.div>
@@ -220,14 +231,14 @@ export default function Footer() {
             transition={{ duration: 0.6, delay: 0.4 }}
             viewport={{ once: true }}
           >
-            <h4 className="text-lg font-semibold mb-6 text-white">
+            <h4 className="text-sm sm:text-base md:text-lg font-semibold mb-4 sm:mb-6 text-white">
               Contact Info
             </h4>
             <div className="space-y-4">
               <div className="flex items-start space-x-3">
                 <FaMapMarkerAlt className="text-primary mt-1 flex-shrink-0" />
                 <div>
-                  <p className="text-gray-300">
+                  <p className="text-gray-300 text-xs sm:text-sm md:text-base">
                     Greece K15 office 08 international city Dubai
                     <br />
                     United Arab Emirates
@@ -258,7 +269,7 @@ export default function Footer() {
               <div className="flex items-start space-x-3">
                 <FaClock className="text-primary mt-1 flex-shrink-0" />
                 <div>
-                  <p className="text-gray-300">
+                  <p className="text-gray-300 text-xs sm:text-sm md:text-base">
                     Mon - Sat: 9AM - 7PM
                     <br />
                     Sunday: 10AM - 4PM

@@ -1,25 +1,48 @@
-const Order = require("../models/Order");
-const Product = require("../models/Product");
+const { COLLECTIONS, admin } = require("../firebase");
 
-const hydrateFileOrder = async (req, order) => {
-  const hydrated = { ...order };
+const hydrateOrder = async (req, order) => {
+  const hydrated = { ...order, _id: order.id };
 
-  // user
-  if (req.user?.role === "admin") {
-    const u = await req.fileDatabase.getUserById(order.user);
-    hydrated.user = u ? { _id: u._id, name: u.name, email: u.email } : null;
+  // Get user details if admin
+  if (req.user?.role === "admin" && typeof order.userId === "string" && order.userId.trim() !== "") {
+    const userDoc = await req.db
+      .collection(COLLECTIONS.USERS)
+      .doc(order.userId)
+      .get();
+    if (userDoc.exists) {
+      const userData = userDoc.data();
+      hydrated.user = {
+        _id: userData.id,
+        name: userData.name,
+        email: userData.email,
+      };
+    }
   } else {
-    hydrated.user = order.user;
+    hydrated.user = order.userId;
   }
 
-  // products
-  hydrated.products = await Promise.all(
-    (order.products || []).map(async (item) => {
-      const p = await req.fileDatabase.getProduct(item.product);
+  // Get product details for each item
+  hydrated.items = await Promise.all(
+    (order.items || []).map(async (item) => {
+      let productDoc = null;
+      let productData = null;
+
+      if (typeof item.productId === "string" && item.productId.trim() !== "") {
+        productDoc = await req.db
+          .collection(COLLECTIONS.PRODUCTS)
+          .doc(item.productId)
+          .get();
+        productData = productDoc.exists ? productDoc.data() : null;
+      }
       return {
         ...item,
-        product: p
-          ? { _id: p._id, name: p.name, price: p.price, images: p.images }
+        product: productData
+          ? {
+              _id: productDoc.id,
+              name: productData.name,
+              price: productData.price,
+              images: productData.images,
+            }
           : null,
       };
     }),
@@ -30,61 +53,50 @@ const hydrateFileOrder = async (req, order) => {
 
 exports.getOrders = async (req, res) => {
   try {
-    let query = {};
+    const { db } = req;
+    let query = db.collection(COLLECTIONS.ORDERS);
+
+    // Filter by user if not admin
     if (req.user.role !== "admin") {
-      query.user = req.user.id;
+      query = query.where("userId", "==", req.user.id);
     }
 
-    let orders;
-    if (req.useFileDatabase) {
-      const rawOrders = await req.fileDatabase.getOrders(req.user.id, {
-        admin: req.user.role === "admin",
-      });
-      orders = await Promise.all(rawOrders.map((o) => hydrateFileOrder(req, o)));
-    } else {
-      orders = await Order.find(query)
-        .populate("user", "name email")
-        .populate("products.product", "name price images")
-        .sort({ createdAt: -1 });
+    const snapshot = await query.orderBy("createdAt", "desc").get();
+    let orders = [];
+
+    for (const doc of snapshot.docs) {
+      const order = { id: doc.id, ...doc.data() };
+      const hydrated = await hydrateOrder(req, order);
+      orders.push(hydrated);
     }
 
     res.json(orders);
   } catch (err) {
     console.error("Get orders error:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
 exports.getOrder = async (req, res) => {
   try {
-    let order;
-    if (req.useFileDatabase) {
-      const rawOrder = await req.fileDatabase.getOrder(
-        req.params.id,
-        req.user.id,
-        req.user.role === "admin",
-      );
-      order = rawOrder ? await hydrateFileOrder(req, rawOrder) : null;
-    } else {
-      order = await Order.findById(req.params.id)
-        .populate("user", "name email")
-        .populate("products.product", "name price images");
-    }
+    const { id } = req.params;
+    const { db } = req;
 
-    if (!order) {
+    const doc = await db.collection(COLLECTIONS.ORDERS).doc(id).get();
+
+    if (!doc.exists) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // Access control (file DB uses string ids, Mongo uses populated doc)
-    if (req.user.role !== "admin") {
-      const orderUserId =
-        typeof order.user === "string" ? order.user : order.user?._id?.toString();
-      if (orderUserId && orderUserId !== req.user.id) {
-        return res.status(403).json({ message: "Access denied" });
-      }
+    const order = { id: doc.id, ...doc.data() };
+
+    // Access control
+    if (req.user.role !== "admin" && order.userId !== req.user.id) {
+      return res.status(403).json({ message: "Access denied" });
     }
 
-    res.json(order);
+    const hydrated = await hydrateOrder(req, order);
+    res.json(hydrated);
   } catch (err) {
     console.error("Get order error:", err);
     res.status(500).json({ message: "Server error" });
@@ -93,94 +105,101 @@ exports.getOrder = async (req, res) => {
 
 exports.createOrder = async (req, res) => {
   try {
-    const { products, address, paymentMethod } = req.body;
+    const { items, shippingAddress, paymentMethod } = req.body;
+    const { db } = req;
 
     let totalPrice = 0;
-    const orderProducts = [];
+    const orderItems = [];
 
-    for (const item of products) {
-      let product;
-      if (req.useFileDatabase) {
-        product = await req.fileDatabase.getProduct(item.product);
-      } else {
-        product = await Product.findById(item.product);
+    for (const item of items) {
+      const productDoc = await db
+        .collection(COLLECTIONS.PRODUCTS)
+        .doc(item.productId)
+        .get();
+
+      if (!productDoc.exists) {
+        return res.status(400).json({ message: "Product not found" });
       }
 
-      if (!product || product.stock < item.quantity) {
-        return res
-          .status(400)
-          .json({ message: "Product not available or insufficient stock" });
+      const product = productDoc.data();
+
+      if (product.stock < item.quantity) {
+        return res.status(400).json({ message: "Insufficient stock" });
       }
 
-      orderProducts.push({
-        product: item.product,
-        quantity: item.quantity,
+      orderItems.push({
+        productId: item.productId,
+        name: product.name,
         price: product.price,
+        quantity: item.quantity,
+        image: product.images?.[0] || "",
       });
 
       totalPrice += product.price * item.quantity;
 
       // Update stock
-      if (!req.useFileDatabase) {
-        product.stock -= item.quantity;
-        await product.save();
-      } else {
-        // For file database, update stock in the product
-        await req.fileDatabase.updateProduct(item.product, {
-          stock: product.stock - item.quantity,
+      await db
+        .collection(COLLECTIONS.PRODUCTS)
+        .doc(item.productId)
+        .update({
+          stock: admin.firestore.FieldValue.increment(-item.quantity),
         });
-      }
     }
+
+    // Get user details
+    const userDoc = await db
+      .collection(COLLECTIONS.USERS)
+      .doc(req.user.id)
+      .get();
+    const userData = userDoc.data();
 
     const orderData = {
-      user: req.user.id,
-      products: orderProducts,
+      userId: req.user.id,
+      userEmail: userData.email,
+      userName: userData.name,
+      items: orderItems,
       totalPrice,
-      address,
+      shippingAddress,
       paymentMethod,
       status: "Pending",
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
-    let order;
-    if (req.useFileDatabase) {
-      order = await req.fileDatabase.createOrder(orderData);
-    } else {
-      order = new Order(orderData);
-      await order.save();
-    }
+    const docRef = await db.collection(COLLECTIONS.ORDERS).add(orderData);
+    const order = { id: docRef.id, ...orderData };
 
     res.status(201).json(order);
   } catch (err) {
     console.error("Create order error:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
 exports.updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
+    const { id } = req.params;
+    const { db } = req;
+
     const normalizedStatus =
       typeof status === "string" && status.length
         ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
         : status;
 
-    let order;
-    if (req.useFileDatabase) {
-      order = await req.fileDatabase.updateOrderStatus(
-        req.params.id,
-        normalizedStatus,
-      );
-    } else {
-      order = await Order.findByIdAndUpdate(
-        req.params.id,
-        { status: normalizedStatus },
-        { new: true },
-      ).populate("user", "name email");
-    }
+    const doc = await db.collection(COLLECTIONS.ORDERS).doc(id).get();
 
-    if (!order) {
+    if (!doc.exists) {
       return res.status(404).json({ message: "Order not found" });
     }
+
+    await db.collection(COLLECTIONS.ORDERS).doc(id).update({
+      status: normalizedStatus,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    const updatedDoc = await db.collection(COLLECTIONS.ORDERS).doc(id).get();
+    const order = { id: updatedDoc.id, ...updatedDoc.data() };
 
     res.json(order);
   } catch (err) {

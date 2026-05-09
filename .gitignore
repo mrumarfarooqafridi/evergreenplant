@@ -18,6 +18,11 @@ yarn-error.log*
 .env.local
 .env.development
 .env.production
+client/.env.local
+server/.env
+
+# Uploads folder
+server/uploads/
 
 # OS files
 .DS_Store
