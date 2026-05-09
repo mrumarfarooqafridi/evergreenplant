@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  Headset,
+  Headphones,
   Mail,
   Phone,
   MessageCircle,
@@ -25,7 +25,7 @@ export default function SupportPage() {
             className="max-w-4xl mx-auto text-center"
           >
             <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
-              <Headset className="w-8 h-8 text-green-600" />
+              <Headphones className="w-8 h-8 text-green-600" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Customer Support
@@ -163,7 +163,7 @@ export default function SupportPage() {
             >
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600">
-                  <Headset className="w-6 h-6" />
+                  <Headphones className="w-6 h-6" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900">
                   What We Help With
