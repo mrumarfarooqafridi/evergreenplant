@@ -37,9 +37,26 @@ cloudinary.config({
 const app = express();
 
 // Middleware
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: true, // Allow any origin to connect dynamically
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, curl, Postman)
+      if (!origin) return callback(null, true);
+      if (
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".vercel.app") ||
+        origin.endsWith(".onrender.com")
+      ) {
+        return callback(null, true);
+      }
+      callback(null, true); // Allow all for now — tighten after go-live
+    },
     credentials: true,
   }),
 );
