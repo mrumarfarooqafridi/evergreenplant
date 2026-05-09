@@ -105,8 +105,12 @@ exports.getOrder = async (req, res) => {
 
 exports.createOrder = async (req, res) => {
   try {
-    const { items, shippingAddress, paymentMethod } = req.body;
+    const { items, shippingAddress, paymentMethod, contactInfo } = req.body;
     const { db } = req;
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ message: "Order items are required" });
+    }
 
     let totalPrice = 0;
     const orderItems = [];
@@ -155,11 +159,16 @@ exports.createOrder = async (req, res) => {
 
     const orderData = {
       userId: req.user.id,
-      userEmail: userData.email,
-      userName: userData.name,
+      userEmail: userData?.email || "",
+      userName: userData?.name || "",
       items: orderItems,
       totalPrice,
-      shippingAddress,
+      shippingAddress: shippingAddress || {},
+      contactInfo: contactInfo || {
+        name: userData?.name || "",
+        email: userData?.email || "",
+        phone: shippingAddress?.phone || "",
+      },
       paymentMethod,
       status: "Pending",
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -167,7 +176,7 @@ exports.createOrder = async (req, res) => {
     };
 
     const docRef = await db.collection(COLLECTIONS.ORDERS).add(orderData);
-    const order = { id: docRef.id, ...orderData };
+    const order = { id: docRef.id, _id: docRef.id, ...orderData };
 
     res.status(201).json(order);
   } catch (err) {

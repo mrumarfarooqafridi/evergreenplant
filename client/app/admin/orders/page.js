@@ -140,14 +140,19 @@ export default function AdminOrders() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">
-                      {order.user?.name || "N/A"}
+                      {order.user?.name || order.userName || order.contactInfo?.name || "N/A"}
                     </div>
                     <div className="text-sm text-gray-500">
-                      {order.user?.email || "N/A"}
+                      {order.user?.email || order.userEmail || order.contactInfo?.email || "N/A"}
                     </div>
+                    {(order.contactInfo?.phone || order.shippingAddress?.phone) && (
+                      <div className="text-sm text-gray-500">
+                        📞 {order.contactInfo?.phone || order.shippingAddress?.phone}
+                      </div>
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {order.products?.length || 0} items
+                    {(order.items || order.products)?.length || 0} items
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     AED {order.totalPrice}
@@ -219,20 +224,30 @@ export default function AdminOrders() {
                 <h3 className="text-lg font-semibold mb-2">
                   Customer Information
                 </h3>
-                <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="bg-gray-50 p-4 rounded-lg space-y-1">
                   <p>
-                    <strong>Name:</strong> {selectedOrder.user?.name || "N/A"}
+                    <strong>Name:</strong>{" "}
+                    {selectedOrder.user?.name || selectedOrder.userName || selectedOrder.contactInfo?.name || "N/A"}
                   </p>
                   <p>
-                    <strong>Email:</strong> {selectedOrder.user?.email || "N/A"}
+                    <strong>Email:</strong>{" "}
+                    {selectedOrder.user?.email || selectedOrder.userEmail || selectedOrder.contactInfo?.email || "N/A"}
                   </p>
-                  {selectedOrder.address && (
+                  {(selectedOrder.contactInfo?.phone || selectedOrder.shippingAddress?.phone) && (
+                    <p>
+                      <strong>Phone:</strong>{" "}
+                      {selectedOrder.contactInfo?.phone || selectedOrder.shippingAddress?.phone}
+                    </p>
+                  )}
+                  {selectedOrder.shippingAddress && (
                     <div className="mt-2">
                       <strong>Shipping Address:</strong>
                       <p className="mt-1">
-                        {selectedOrder.address.street}, {selectedOrder.address.city},{" "}
-                        {selectedOrder.address.state} {selectedOrder.address.zipCode},{" "}
-                        {selectedOrder.address.country}
+                        {selectedOrder.shippingAddress.street && `${selectedOrder.shippingAddress.street}, `}
+                        {selectedOrder.shippingAddress.city && `${selectedOrder.shippingAddress.city}, `}
+                        {selectedOrder.shippingAddress.state && `${selectedOrder.shippingAddress.state} `}
+                        {selectedOrder.shippingAddress.zipCode && `${selectedOrder.shippingAddress.zipCode}, `}
+                        {selectedOrder.shippingAddress.country}
                       </p>
                     </div>
                   )}
@@ -243,7 +258,7 @@ export default function AdminOrders() {
               <div>
                 <h3 className="text-lg font-semibold mb-2">Order Items</h3>
                 <div className="space-y-2">
-                  {selectedOrder.products?.map((item, index) => (
+                  {(selectedOrder.items || selectedOrder.products || []).map((item, index) => (
                     <div
                       key={index}
                       className="flex items-center justify-between bg-gray-50 p-3 rounded-lg"
@@ -251,15 +266,16 @@ export default function AdminOrders() {
                       <div className="flex items-center gap-3">
                         <img
                           src={
+                            item.image ||
                             item.product?.images?.[0] ||
                             "/plant-placeholder.svg"
                           }
-                          alt={item.product?.name || "Product"}
+                          alt={item.name || item.product?.name || "Product"}
                           className="w-12 h-12 rounded object-cover"
                         />
                         <div>
                           <p className="font-medium">
-                            {item.product?.name || "Unknown Product"}
+                            {item.name || item.product?.name || "Unknown Product"}
                           </p>
                           <p className="text-sm text-gray-600">
                             Quantity: {item.quantity}
@@ -267,7 +283,7 @@ export default function AdminOrders() {
                         </div>
                       </div>
                       <p className="font-semibold">
-                        AED {(item.product?.price || 0) * item.quantity}
+                        AED {((item.price || item.product?.price || 0) * item.quantity).toFixed(2)}
                       </p>
                     </div>
                   ))}

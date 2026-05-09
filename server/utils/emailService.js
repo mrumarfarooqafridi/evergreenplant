@@ -10,10 +10,9 @@ const transporter = nodemailer.createTransport({
     user: emailUser,
     pass: emailPass,
   },
-  tls: {
-    rejectUnauthorized: false,
-  },
 });
+
+const FROM = `"Evergreen Plant Nursery" <${emailUser}>`;
 
 // Send contact form email
 const sendContactEmail = async (contactData) => {
@@ -22,7 +21,7 @@ const sendContactEmail = async (contactData) => {
 
     // Email to business owner
     const mailOptionsToOwner = {
-      from: process.env.EMAIL_USER,
+      from: FROM,
       to: process.env.EMAIL_USER,
       subject: `New Contact Form Submission: ${subject}`,
       html: `
@@ -44,7 +43,7 @@ const sendContactEmail = async (contactData) => {
 
     // Confirmation email to customer
     const mailOptionsToCustomer = {
-      from: process.env.EMAIL_USER,
+      from: FROM,
       to: email,
       subject: "We received your message - Evergreen Nursery",
       html: `
@@ -60,7 +59,7 @@ const sendContactEmail = async (contactData) => {
           <p style="color: #374151;">
             <strong>Contact Details:</strong><br>
             📞 +971 55 481 3234<br>
-            📧 evergreenterrain99@gmail.com<br>
+            📧 plantnurseryevergreen@gmail.com<br>
             🕐 Mon-Sat: 9AM-7PM, Sun: 10AM-4PM
           </p>
           <hr style="border: none; border-top: 1px solid #e5e7eb;">
@@ -101,7 +100,7 @@ module.exports = { sendContactEmail };
 const sendPasswordResetOtp = async ({ to, name, otp }) => {
   try {
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: FROM,
       to,
       subject: "Your Evergreen password reset code",
       html: `

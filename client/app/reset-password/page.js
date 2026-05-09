@@ -16,7 +16,7 @@ export default function ResetPasswordPage() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes to match server
   const [isExpired, setIsExpired] = useState(false);
 
   useEffect(() => {
@@ -96,7 +96,7 @@ export default function ResetPasswordPage() {
               <label className="block text-sm font-medium">OTP</label>
               {!isExpired ? (
                 <span className="text-xs font-semibold text-primary">
-                  Expires in 00:{timeLeft.toString().padStart(2, '0')}
+                  Expires in {Math.floor(timeLeft / 60).toString().padStart(2, '0')}:{(timeLeft % 60).toString().padStart(2, '0')}
                 </span>
               ) : (
                 <span className="text-xs font-semibold text-red-500">

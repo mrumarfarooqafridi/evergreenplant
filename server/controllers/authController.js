@@ -256,6 +256,7 @@ exports.forgotPassword = async (req, res) => {
       userRecord = await auth.getUserByEmail(email);
     } catch (error) {
       if (error.code === "auth/user-not-found") {
+        // Don't reveal whether email exists
         return res.json({
           message: "If the email exists, an OTP has been sent.",
         });
@@ -268,10 +269,10 @@ exports.forgotPassword = async (req, res) => {
     const userDoc = await userRef.get();
     const userData = userDoc.data();
 
-    // Use the OTP service
+    // Use the OTP service - it generates, stores in memory, and tries to email
     const otpResult = await OTPService.sendOTP(
       email,
-      userData.name,
+      userData?.name || "there",
       userRecord.uid,
     );
 
@@ -279,15 +280,18 @@ exports.forgotPassword = async (req, res) => {
       return res.status(500).json({ message: otpResult.message });
     }
 
-    // Store OTP in Firestore
+    // Get the OTP that was just generated and store its hash in Firestore
+    // so it persists across server restarts
     const otp = OTPService.getDevelopmentOTP(email);
-    const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
-    const otpExpires = Date.now() + 60 * 1000; // 60 seconds
+    if (otp) {
+      const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
+      const otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
 
-    await userRef.update({
-      resetOtpHash: otpHash,
-      resetOtpExpires: otpExpires,
-    });
+      await userRef.update({
+        resetOtpHash: otpHash,
+        resetOtpExpires: otpExpires,
+      });
+    }
 
     res.json({
       message: "If the email exists, an OTP has been sent.",
@@ -331,15 +335,20 @@ exports.resetPassword = async (req, res) => {
     const userDoc = await userRef.get();
     const userData = userDoc.data();
 
-    // Verify OTP
+    // Verify OTP - check both in-memory store and Firestore hash
     const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
 
-    if (
-      !userData.resetOtpHash ||
-      !userData.resetOtpExpires ||
-      Date.now() > Number(userData.resetOtpExpires) ||
-      userData.resetOtpHash !== otpHash
-    ) {
+    // First try in-memory verification
+    const memoryVerification = OTPService.verifyOTP(email, otp);
+
+    // Then check Firestore as fallback
+    const firestoreValid =
+      userData?.resetOtpHash &&
+      userData?.resetOtpExpires &&
+      Date.now() <= Number(userData.resetOtpExpires) &&
+      userData.resetOtpHash === otpHash;
+
+    if (!memoryVerification.valid && !firestoreValid) {
       return res.status(400).json({ message: "Invalid OTP or expired" });
     }
 

@@ -3,7 +3,7 @@ export const metadata = {
   description: "Plant care tips, guides, and updates from Evergreen Nursery.",
 };
 
-import Image from "next/image";
+import BlogCard from "../../components/BlogCard";
 
 async function getBlogs() {
   try {
@@ -11,7 +11,8 @@ async function getBlogs() {
       cache: "no-store",
     });
     if (!res.ok) return [];
-    return await res.json();
+    const data = await res.json();
+    return Array.isArray(data) ? data : data.blogs || [];
   } catch {
     return [];
   }
@@ -32,33 +33,10 @@ export default async function BlogPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {blogs.map((blog) => (
-            <article
-              key={blog._id}
-              className="bg-white border border-gray-100 shadow-sm rounded-xl overflow-hidden"
-            >
-              <div className="relative h-48">
-                <Image
-                  src={blog.image || "/plant-placeholder.svg"}
-                  alt={blog.title}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-5">
-                <p className="text-xs text-primary font-semibold mb-2 uppercase">
-                  {blog.category || "General"}
-                </p>
-                <h2 className="text-xl font-semibold mb-2">{blog.title}</h2>
-                <p className="text-gray-600 text-sm mb-4">
-                  {blog.excerpt || "Read the full update from our team."}
-                </p>
-                <p className="text-sm text-gray-500">{blog.content}</p>
-              </div>
-            </article>
+            <BlogCard key={blog._id || blog.id} blog={blog} />
           ))}
         </div>
       )}
     </div>
   );
 }
-

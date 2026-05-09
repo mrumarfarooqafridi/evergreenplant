@@ -164,7 +164,7 @@ export default function Orders() {
               <div className="mb-4 bg-gray-50 p-4 rounded-lg">
                 <h4 className="font-semibold mb-3">Items:</h4>
                 <div className="space-y-2">
-                  {order.products.map((item, index) => (
+                  {(order.items || order.products || []).map((item, index) => (
                     <motion.div
                       key={index}
                       initial={{ opacity: 0, x: -10 }}
@@ -173,11 +173,11 @@ export default function Orders() {
                       className="flex justify-between text-sm"
                     >
                       <span className="text-gray-700">
-                        {item.product.name} x{" "}
+                        {item.name || item.product?.name || "Product"} x{" "}
                         <span className="font-semibold">{item.quantity}</span>
                       </span>
                       <span className="font-semibold text-gray-900">
-                        AED {(item.price * item.quantity).toFixed(2)}
+                        AED {((item.price || item.product?.price || 0) * item.quantity).toFixed(2)}
                       </span>
                     </motion.div>
                   ))}
@@ -193,7 +193,8 @@ export default function Orders() {
                   <div>
                     <p className="text-sm text-gray-600">Shipping To</p>
                     <p className="font-semibold text-sm">
-                      {order.address.street}, {order.address.city}
+                      {(order.shippingAddress || order.address)?.street},{" "}
+                      {(order.shippingAddress || order.address)?.city}
                     </p>
                   </div>
                   <div className="text-right">

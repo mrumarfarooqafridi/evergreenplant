@@ -18,6 +18,7 @@ export default function AdminUsers() {
     email: "",
     role: "user",
     isBlocked: false,
+    newPassword: "",
   });
 
   useEffect(() => {
@@ -55,14 +56,26 @@ export default function AdminUsers() {
       const token = localStorage.getItem("token");
 
       if (editingUser) {
+        const payload = {
+          name: formData.name,
+          email: formData.email,
+          role: formData.role,
+          isBlocked: formData.isBlocked,
+        };
+        if (formData.newPassword && formData.newPassword.trim() !== "") {
+          if (formData.newPassword.length < 6) {
+            toast.error("Password must be at least 6 characters");
+            return;
+          }
+          payload.newPassword = formData.newPassword;
+        }
         await axios.put(
           `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${editingUser._id}`,
-          formData,
+          payload,
           { headers: { Authorization: `Bearer ${token}` } },
         );
         toast.success("User updated successfully");
       } else {
-        // Note: Adding new users would require a separate endpoint
         toast.error("Adding new users is not implemented yet");
         return;
       }
@@ -74,6 +87,7 @@ export default function AdminUsers() {
         email: "",
         role: "user",
         isBlocked: false,
+        newPassword: "",
       });
       fetchUsers();
     } catch (error) {
@@ -88,6 +102,7 @@ export default function AdminUsers() {
       email: user.email,
       role: user.role,
       isBlocked: user.isBlocked,
+      newPassword: "",
     });
     setShowEditModal(true);
   };
@@ -130,6 +145,7 @@ export default function AdminUsers() {
       email: "",
       role: "user",
       isBlocked: false,
+      newPassword: "",
     });
     setEditingUser(null);
   };
@@ -319,6 +335,25 @@ export default function AdminUsers() {
                   Block User
                 </label>
               </div>
+
+              {editingUser && (
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    New Password{" "}
+                    <span className="text-gray-400 font-normal">(leave blank to keep current)</span>
+                  </label>
+                  <input
+                    type="password"
+                    value={formData.newPassword}
+                    onChange={(e) =>
+                      setFormData({ ...formData, newPassword: e.target.value })
+                    }
+                    className="w-full p-2 border rounded-md"
+                    placeholder="Enter new password"
+                    minLength={6}
+                  />
+                </div>
+              )}
 
               <div className="flex gap-2 pt-4">
                 <button type="submit" className="btn-primary flex-1">

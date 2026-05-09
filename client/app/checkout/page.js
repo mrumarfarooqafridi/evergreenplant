@@ -72,12 +72,21 @@ export default function Checkout() {
       }
 
       const orderData = {
-        products: cart.map((item) => ({
-          product: item.product._id,
+        items: cart.map((item) => ({
+          productId: item.product._id || item.product.id,
           quantity: item.quantity,
-          price: item.product.price,
         })),
-        address: formData.address,
+        shippingAddress: {
+          ...formData.address,
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+        },
+        contactInfo: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+        },
         paymentMethod: formData.paymentMethod,
       };
 

@@ -31,7 +31,7 @@ exports.getAllUsers = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, role } = req.body;
+    const { name, email, role, isBlocked, newPassword } = req.body;
     const { db, auth } = req;
 
     const doc = await db.collection(COLLECTIONS.USERS).doc(id).get();
@@ -44,15 +44,25 @@ exports.updateUser = async (req, res) => {
     if (name !== undefined) updateData.name = name;
     if (email !== undefined) updateData.email = email;
     if (role !== undefined) updateData.role = role;
+    if (isBlocked !== undefined) updateData.isBlocked = isBlocked;
 
     await db.collection(COLLECTIONS.USERS).doc(id).update(updateData);
 
-    // Update email in Firebase Auth if changed
-    if (email !== undefined) {
+    // Update Firebase Auth fields
+    const authUpdate = {};
+    if (email !== undefined) authUpdate.email = email;
+    if (newPassword && newPassword.trim() !== "") {
+      if (newPassword.length < 6) {
+        return res.status(400).json({ message: "Password must be at least 6 characters" });
+      }
+      authUpdate.password = newPassword;
+    }
+
+    if (Object.keys(authUpdate).length > 0) {
       try {
-        await auth.updateUser(id, { email });
+        await auth.updateUser(id, authUpdate);
       } catch (error) {
-        console.error("Error updating email in Firebase Auth:", error);
+        console.error("Error updating user in Firebase Auth:", error);
       }
     }
 

@@ -18,7 +18,7 @@ class OTPService {
     try {
       const otp = this.generateOTP();
       const otpHash = this.hashOTP(otp);
-      const expiresAt = Date.now() + 60 * 1000; // 60 seconds
+      const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
 
       // Store OTP in memory for fallback
       otpStore.set(email, {

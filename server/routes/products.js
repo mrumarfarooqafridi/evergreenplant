@@ -1,5 +1,4 @@
 const express = require("express");
-const multer = require("multer");
 const { auth, adminAuth } = require("../middleware/auth");
 const {
   getProducts,
@@ -11,12 +10,12 @@ const {
 
 const router = express.Router();
 
-const upload = multer({ dest: "uploads/" });
-
+// Images are uploaded client-side to Firebase Storage.
+// The server only receives/stores the resulting download URLs as JSON.
 router.get("/", getProducts);
 router.get("/:id", getProduct);
-router.post("/", adminAuth, upload.array("images"), createProduct);
-router.put("/:id", adminAuth, upload.array("images"), updateProduct);
+router.post("/", adminAuth, createProduct);
+router.put("/:id", adminAuth, updateProduct);
 router.delete("/:id", adminAuth, deleteProduct);
 
 module.exports = router;
