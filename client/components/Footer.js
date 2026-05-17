@@ -111,7 +111,7 @@ export default function Footer() {
       )}
 
       {/* Main Footer Content */}
-      <div className="container mx-auto px-4 py-6 sm:py-10 md:py-16">
+      <div className="container mx-auto px-5 sm:px-4 py-6 sm:py-10 md:py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
           {/* Company Info */}
           <motion.div
@@ -287,12 +287,12 @@ export default function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-gray-700">
-        <div className="container mx-auto px-4 py-6">
+        <div className="container mx-auto px-5 sm:px-4 py-4 sm:py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-gray-300 text-xs md:text-sm">
+            <p className="text-gray-300 text-xs">
               &copy; 2024 Evergreen Plant Nursery. All rights reserved.
             </p>
-            <div className="flex flex-wrap gap-3 md:gap-6 text-xs md:text-sm">
+            <div className="flex flex-wrap gap-3 md:gap-6 text-xs">
               <Link
                 href="/privacy"
                 className="text-gray-300 hover:text-primary transition-colors"

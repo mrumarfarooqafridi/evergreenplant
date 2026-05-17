@@ -117,17 +117,17 @@ export default function FeaturedProducts() {
             viewport={{ once: true }}
             className="inline-block mb-4"
           >
-            <span className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-semibold tracking-wide">
+            <span className="bg-green-100 text-green-800 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold tracking-wide">
               🌿 FEATURED COLLECTION
             </span>
           </motion.div>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
             Premium Plants
-            <span className="block text-green-600 text-2xl md:text-3xl font-medium mt-2">
+            <span className="block text-green-600 text-base sm:text-2xl md:text-3xl font-medium mt-2">
               Handpicked for You
             </span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-base md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
             Discover our curated selection of exceptional plants, each chosen
             for their beauty, health, and ability to transform your space into a
             lush paradise
@@ -170,10 +170,11 @@ export default function FeaturedProducts() {
             }
           `}</style>
           <Swiper
-            slidesPerView={1}
-            spaceBetween={16}
+            slidesPerView={2}
+            spaceBetween={10}
             breakpoints={{
-              640: { slidesPerView: 2, spaceBetween: 20 },
+              480: { slidesPerView: 2, spaceBetween: 12 },
+              640: { slidesPerView: 3, spaceBetween: 16 },
               1024: { slidesPerView: 3, spaceBetween: 24 },
               1280: { slidesPerView: 4, spaceBetween: 24 },
             }}

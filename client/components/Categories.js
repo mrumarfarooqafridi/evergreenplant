@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { Flower2, Home, Sprout, Sun } from "lucide-react";
 
 const categories = [
-  { name: "Indoor Plants", image: "/indoor.jpg", slug: "indoor" },
-  { name: "Outdoor Plants", image: "/outdoor.jpg", slug: "outdoor" },
-  { name: "Succulents", image: "/succulents.jpg", slug: "succulents" },
-  { name: "Flowering Plants", image: "/flowering.jpg", slug: "flowering" },
+  { name: "Indoor", slug: "indoor", Icon: Home },
+  { name: "Outdoor", slug: "outdoor", Icon: Sun },
+  { name: "Succulents", slug: "succulents", Icon: Sprout },
+  { name: "Flowering", slug: "flowering", Icon: Flower2 },
 ];
 
 const containerVariants = {
@@ -34,14 +35,14 @@ const itemVariants = {
 
 export default function Categories() {
   return (
-    <section className="py-16">
-      <div className="container mx-auto px-4">
+    <section className="py-10 sm:py-16">
+      <div className="container mx-auto px-5 sm:px-4">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-3xl font-bold text-center mb-12"
+          className="text-xl sm:text-3xl font-bold text-center mb-6 sm:mb-12"
         >
           Shop by Category
         </motion.h2>
@@ -50,19 +51,17 @@ export default function Categories() {
           whileInView="visible"
           viewport={{ once: true }}
           variants={containerVariants}
-          className="grid grid-cols-2 md:grid-cols-4 gap-6"
+          className="grid grid-cols-4 gap-2 sm:gap-6"
         >
           {categories.map((category) => (
             <motion.div key={category.slug} variants={itemVariants}>
               <Link href={`/products?category=${category.slug}`}>
-                <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group">
-                  <div className="h-32 bg-gradient-to-br from-green-300 to-green-500 flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
-                    <span className="text-white font-semibold text-sm text-center px-2">
-                      {category.name}
-                    </span>
-                  </div>
-                  <div className="p-4 text-center">
-                    <h3 className="font-semibold text-gray-800 group-hover:text-primary transition-colors">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer group">
+                  <div className="p-3 sm:p-5 flex flex-col items-center justify-center text-center gap-2 sm:gap-3">
+                    <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
+                      <category.Icon className="w-5 h-5 sm:w-6 sm:h-6" />
+                    </div>
+                    <h3 className="font-semibold text-[11px] sm:text-base text-gray-800 group-hover:text-primary transition-colors leading-tight">
                       {category.name}
                     </h3>
                   </div>

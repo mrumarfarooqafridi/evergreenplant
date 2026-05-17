@@ -40,7 +40,7 @@ export default function AdminLayout({ children }) {
         </button>
       </div>
 
-      <div className="flex">
+      <div className="flex min-w-0">
         {/* Sidebar */}
         <aside
           className={`
@@ -99,7 +99,7 @@ export default function AdminLayout({ children }) {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 min-h-screen">
+        <main className="flex-1 min-h-screen min-w-0">
           {children}
         </main>
       </div>

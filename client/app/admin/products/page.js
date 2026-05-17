@@ -86,7 +86,7 @@ export default function AdminProducts() {
   if (loading) return <div className="flex justify-center items-center min-h-screen"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-600" /></div>;
 
   return (
-    <div className="p-3 sm:p-4 lg:p-8">
+    <div className="p-3 sm:p-4 lg:p-8 min-w-0">
       {/* Header */}
       <div className="flex items-center justify-between mb-5 gap-3">
         <h1 className="text-lg sm:text-2xl font-bold text-gray-900">Products</h1>

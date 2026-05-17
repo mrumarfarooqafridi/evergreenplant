@@ -47,7 +47,7 @@ export default function ProductCard({
     >
       <div className="bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden h-full flex flex-col">
         {/* Image Container */}
-        <div className="relative h-56 md:h-64 bg-gray-100 overflow-hidden rounded-t-xl">
+        <div className="relative h-28 sm:h-56 md:h-64 bg-gray-100 overflow-hidden rounded-t-xl">
           <Image
             src={product.images?.[0] || "/placeholder.jpg"}
             alt={product.name}
@@ -86,26 +86,28 @@ export default function ProductCard({
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={handleViewDetails}
-              className="flex items-center justify-center w-12 h-12 md:w-14 md:h-14 bg-white hover:bg-primary hover:text-white text-gray-800 rounded-full transition-all"
+              className="flex items-center justify-center w-9 h-9 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-white hover:bg-primary hover:text-white text-gray-800 rounded-full transition-all"
               title="View Details"
             >
-              <FaEye size={20} />
+              <FaEye size={16} className="sm:hidden" />
+              <FaEye size={20} className="hidden sm:block" />
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={handleAddToCart}
               disabled={product.stock === 0}
-              className="flex items-center justify-center w-12 h-12 md:w-14 md:h-14 bg-primary hover:bg-green-700 text-white rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center justify-center w-9 h-9 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-primary hover:bg-green-700 text-white rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               title="Add to Cart"
             >
-              <FaPlus size={20} />
+              <FaPlus size={16} className="sm:hidden" />
+              <FaPlus size={20} className="hidden sm:block" />
             </motion.button>
           </motion.div>
         </div>
 
         {/* Content */}
-        <div className="p-4 md:p-5 flex-grow flex flex-col">
+        <div className="p-2 sm:p-4 md:p-5 flex-grow flex flex-col">
           {/* Rating */}
           <div className="flex items-center gap-1 mb-2">
             <div className="flex gap-0.5">
@@ -127,18 +129,18 @@ export default function ProductCard({
           </div>
 
           {/* Product Name */}
-          <h3 className="text-base md:text-lg font-bold text-gray-800 mb-2 line-clamp-2 hover:text-primary transition-colors cursor-pointer">
+          <h3 className="text-xs sm:text-base md:text-lg font-bold text-gray-800 mb-1.5 sm:mb-2 line-clamp-2 hover:text-primary transition-colors cursor-pointer">
             {product.name}
           </h3>
 
           {/* Description */}
-          <p className="text-xs md:text-sm text-gray-600 mb-3 line-clamp-2 flex-grow">
+          <p className="text-[10px] sm:text-xs md:text-sm text-gray-600 mb-2 sm:mb-3 line-clamp-2 flex-grow">
             {product.description}
           </p>
 
           {/* Price */}
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-xl md:text-2xl font-bold text-primary">
+          <div className="flex items-center justify-between mb-2 sm:mb-4">
+            <span className="text-sm sm:text-xl md:text-2xl font-bold text-primary">
               AED {product.price}
             </span>
           </div>
@@ -149,7 +151,7 @@ export default function ProductCard({
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleViewDetails}
-              className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-3 rounded-lg transition-all text-xs md:text-sm"
+              className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1.5 sm:py-2 px-2 sm:px-3 rounded-lg transition-all text-[10px] sm:text-xs md:text-sm"
             >
               Details
             </motion.button>
@@ -158,7 +160,7 @@ export default function ProductCard({
               whileTap={{ scale: 0.98 }}
               onClick={handleAddToCart}
               disabled={product.stock === 0}
-              className="flex-1 bg-primary hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2 px-3 rounded-lg transition-all text-xs md:text-sm"
+              className="flex-1 bg-primary hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-1.5 sm:py-2 px-2 sm:px-3 rounded-lg transition-all text-[10px] sm:text-xs md:text-sm"
             >
               Add
             </motion.button>

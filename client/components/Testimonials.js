@@ -46,7 +46,7 @@ const itemVariants = {
 export default function Testimonials() {
   return (
     <section className="py-16 bg-gradient-to-b from-white to-gray-50">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-5 sm:px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -54,10 +54,10 @@ export default function Testimonials() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
             What Our Customers Say
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xs sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
             Hear from our happy customers about their experience with Evergreen
             Nursery
           </p>
@@ -68,16 +68,16 @@ export default function Testimonials() {
           whileInView="visible"
           viewport={{ once: true }}
           variants={containerVariants}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          className="grid grid-cols-3 gap-2 sm:gap-6"
         >
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={index}
               variants={itemVariants}
               whileHover={{ y: -5 }}
-              className="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100"
+              className="bg-white p-3 sm:p-6 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100"
             >
-              <div className="flex gap-1 mb-4">
+              <div className="flex gap-0.5 mb-2 sm:mb-4">
                 {[...Array(5)].map((_, i) => (
                   <FaStar
                     key={i}
@@ -89,14 +89,14 @@ export default function Testimonials() {
                   />
                 ))}
               </div>
-              <p className="text-gray-600 mb-6 text-lg leading-relaxed italic">
+              <p className="text-gray-600 mb-3 sm:mb-6 text-[11px] sm:text-sm md:text-base leading-relaxed italic">
                 &ldquo;{testimonial.text}&rdquo;
               </p>
-              <div className="border-t pt-4">
-                <p className="font-bold text-gray-900 text-lg">
+              <div className="border-t pt-2 sm:pt-4">
+                <p className="font-bold text-gray-900 text-xs sm:text-base">
                   {testimonial.name}
                 </p>
-                <p className="text-sm text-gray-500">Happy Customer</p>
+                <p className="text-[10px] sm:text-xs text-gray-500">Happy Customer</p>
               </div>
             </motion.div>
           ))}
