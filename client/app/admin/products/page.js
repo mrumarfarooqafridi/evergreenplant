@@ -99,9 +99,9 @@ export default function AdminProducts() {
       </div>
 
       {/* Table — card layout on mobile, table on md+ */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100">
         {/* Mobile card list */}
-        <div className="md:hidden divide-y divide-gray-100 max-h-[70vh] overflow-y-auto">
+        <div className="md:hidden divide-y divide-gray-100 max-h-[70vh] overflow-y-auto overflow-x-hidden">
           {products.length === 0 ? (
             <p className="text-center text-gray-500 py-10 text-sm">No products yet.</p>
           ) : products.map((p) => (
@@ -126,7 +126,7 @@ export default function AdminProducts() {
 
         {/* Desktop table */}
         <div className="hidden md:block overflow-x-auto max-h-[70vh] overflow-y-auto">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[900px] text-sm">
             <thead className="bg-gray-50 border-b border-gray-100 sticky top-0 z-10">
               <tr>
                 {["Product", "Category", "Price", "Stock", "Actions"].map(h => (

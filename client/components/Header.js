@@ -90,11 +90,11 @@ export default function Header() {
 
   return (
     <header className="bg-white shadow-lg sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-6">
-        <div className="flex justify-between items-center">
+      <div className="container mx-auto px-4 py-3 sm:py-5">
+        <div className="flex items-center justify-between gap-3">
           <Link
             href="/"
-            className="md:text-2xl text-sm font-bold text-primary flex items-center space-x-2 hover:text-secondary transition-colors"
+            className="text-lg sm:text-xl md:text-2xl font-bold text-primary flex items-center gap-2 hover:text-secondary transition-colors shrink-0"
             onClick={closeMenus}
           >
             <FaLeaf className="text-green-600" />
@@ -121,13 +121,13 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
             <Link
               href="/cart"
               className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
               onClick={closeMenus}
             >
-              <FaShoppingCart className="text-md md:text-xl text-gray-700 hover:text-primary" />
+              <FaShoppingCart className="text-lg md:text-xl text-gray-700 hover:text-primary" />
               {cartCount > 0 && (
                 <motion.span
                   initial={{ scale: 0 }}
@@ -153,7 +153,7 @@ export default function Header() {
                       className="w-8 h-8 rounded-full object-cover border border-gray-200"
                     />
                   ) : (
-                    <FaUserCircle className="text-md md:text-xl text-gray-700" />
+                    <FaUserCircle className="text-lg md:text-xl text-gray-700" />
                   )}
                   <span className="hidden md:block text-sm font-medium text-gray-700">
                     {user.name || user.email}
@@ -221,14 +221,24 @@ export default function Header() {
                 </AnimatePresence>
               </div>
             ) : (
-              <Link
-                href="/login"
-                className="btn-primary hidden sm:flex items-center space-x-2"
-                onClick={closeMenus}
-              >
-                <FaUser className="text-sm" />
-                <span>Login</span>
-              </Link>
+              <>
+                <Link
+                  href="/login"
+                  className="sm:hidden relative p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  onClick={closeMenus}
+                  aria-label="Login"
+                >
+                  <FaUserCircle className="text-lg text-gray-700 hover:text-primary" />
+                </Link>
+                <Link
+                  href="/login"
+                  className="btn-primary hidden sm:flex items-center space-x-2"
+                  onClick={closeMenus}
+                >
+                  <FaUser className="text-sm" />
+                  <span>Login</span>
+                </Link>
+              </>
             )}
 
             <button
@@ -237,9 +247,9 @@ export default function Header() {
               aria-label="Toggle menu"
             >
               {isOpen ? (
-                <FaTimes className="text-xl" />
+                <FaTimes className="text-lg" />
               ) : (
-                <FaBars className="text-xl" />
+                <FaBars className="text-lg" />
               )}
             </button>
           </div>

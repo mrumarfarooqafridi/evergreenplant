@@ -27,6 +27,8 @@ export default function Footer() {
   const [subscribing, setSubscribing] = useState(false);
   const pathname = usePathname();
 
+  if (pathname.startsWith("/admin")) return null;
+
   const handleNewsletterSubmit = async (e) => {
     e.preventDefault();
     setSubscribing(true);
@@ -109,8 +111,8 @@ export default function Footer() {
       )}
 
       {/* Main Footer Content */}
-      <div className="container mx-auto px-4 py-8 sm:py-12 md:py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
+      <div className="container mx-auto px-4 py-6 sm:py-10 md:py-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
           {/* Company Info */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
