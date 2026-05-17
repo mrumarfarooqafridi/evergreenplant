@@ -6,6 +6,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { Plus, Edit, Trash2, X } from "lucide-react";
 import ImageUploader from "../../../components/ImageUploader";
+import ProductPagination from "../../../components/ProductPagination";
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -15,16 +16,26 @@ export default function AdminProducts() {
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({ name: "", description: "", price: "", category: "", stock: "", featured: false });
   const [images, setImages] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
   const router = useRouter();
+  const ITEMS_PER_PAGE = 20;
 
-  useEffect(() => { fetchProducts(); }, []);
+  useEffect(() => { fetchProducts(1); }, []);
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (pageNum = currentPage) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) { router.push("/login"); return; }
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products`, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { page: pageNum, limit: ITEMS_PER_PAGE },
+      });
       setProducts(res.data.products || []);
+      setCurrentPage(pageNum);
+      setTotalPages(res.data.totalPages || 1);
+      setTotal(typeof res.data.total === "number" ? res.data.total : 0);
     } catch (e) {
       toast.error("Failed to fetch products");
       if (e.response?.status === 401) router.push("/login");
@@ -58,7 +69,7 @@ export default function AdminProducts() {
         await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/products`, payload, cfg);
         toast.success("Product added");
       }
-      setShowModal(false); resetForm(); fetchProducts();
+      setShowModal(false); resetForm(); fetchProducts(1);
     } catch (e) { toast.error(e.response?.data?.message || "Failed to save product"); }
     finally { setSaving(false); }
   };
@@ -68,7 +79,7 @@ export default function AdminProducts() {
     try {
       const token = localStorage.getItem("token");
       await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`, { headers: { Authorization: `Bearer ${token}` } });
-      toast.success("Product deleted"); fetchProducts();
+      toast.success("Product deleted"); fetchProducts(Math.min(currentPage, totalPages));
     } catch { toast.error("Failed to delete product"); }
   };
 
@@ -79,15 +90,18 @@ export default function AdminProducts() {
       {/* Header */}
       <div className="flex items-center justify-between mb-5 gap-3">
         <h1 className="text-lg sm:text-2xl font-bold text-gray-900">Products</h1>
-        <button onClick={() => { resetForm(); setShowModal(true); }} className="btn-primary flex items-center gap-1.5 text-sm px-3 py-2">
-          <Plus size={16} /> <span className="hidden sm:inline">Add Product</span><span className="sm:hidden">Add</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full">{total} total</span>
+          <button onClick={() => { resetForm(); setShowModal(true); }} className="btn-primary flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm">
+            <Plus className="w-4 h-4" /> <span className="hidden sm:inline">Add Product</span><span className="sm:hidden">Add</span>
+          </button>
+        </div>
       </div>
 
       {/* Table — card layout on mobile, table on md+ */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         {/* Mobile card list */}
-        <div className="md:hidden divide-y divide-gray-100">
+        <div className="md:hidden divide-y divide-gray-100 max-h-[70vh] overflow-y-auto">
           {products.length === 0 ? (
             <p className="text-center text-gray-500 py-10 text-sm">No products yet.</p>
           ) : products.map((p) => (
@@ -111,9 +125,9 @@ export default function AdminProducts() {
         </div>
 
         {/* Desktop table */}
-        <div className="hidden md:block overflow-x-auto">
+        <div className="hidden md:block overflow-x-auto max-h-[70vh] overflow-y-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-100">
+            <thead className="bg-gray-50 border-b border-gray-100 sticky top-0 z-10">
               <tr>
                 {["Product", "Category", "Price", "Stock", "Actions"].map(h => (
                   <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{h}</th>
@@ -149,6 +163,14 @@ export default function AdminProducts() {
           </table>
         </div>
       </div>
+
+      {totalPages > 1 && (
+        <ProductPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(p) => fetchProducts(Math.max(1, Math.min(totalPages, p)))}
+        />
+      )}
 
       {/* Modal */}
       {showModal && (

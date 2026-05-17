@@ -13,12 +13,14 @@ import ProductModal from "../../components/ProductModal";
 import Modal from "../../components/ui/Modal";
 
 export default function Products() {
-  const [allProducts, setAllProducts] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
   const [filters, setFilters] = useState({
     category: "",
     minPrice: "",
@@ -31,24 +33,28 @@ export default function Products() {
 
   useEffect(() => {
     const category = searchParams.get("category") || "";
-    setFilters((prev) => ({ ...prev, category }));
-    fetchProducts({ ...filters, category });
+    const nextFilters = { ...filters, category };
+    setFilters(nextFilters);
     setCurrentPage(1);
+    fetchProducts(nextFilters, 1);
   }, [searchParams]);
 
-  const fetchProducts = async (filterParams = filters) => {
+  const fetchProducts = async (filterParams = filters, pageNum = currentPage) => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
       Object.entries(filterParams).forEach(([key, value]) => {
         if (value) params.append(key, value);
       });
+      params.append("page", String(pageNum));
+      params.append("limit", String(ITEMS_PER_PAGE));
 
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/products?${params}`,
       );
-      setAllProducts(response.data.products || []);
-      setCurrentPage(1);
+      setProducts(response.data.products || []);
+      setTotalPages(response.data.totalPages || 1);
+      setTotal(typeof response.data.total === "number" ? response.data.total : 0);
     } catch (error) {
       console.error("Error fetching products:", error);
       toast.error("Failed to load products");
@@ -62,23 +68,21 @@ export default function Products() {
   };
 
   const handleFilterSubmit = () => {
-    fetchProducts();
+    setCurrentPage(1);
+    fetchProducts(filters, 1);
     setIsFilterModalOpen(false);
   };
 
   const handleResetFilters = () => {
-    setFilters({
+    const nextFilters = {
       category: "",
       minPrice: "",
       maxPrice: "",
       search: "",
-    });
-    fetchProducts({
-      category: "",
-      minPrice: "",
-      maxPrice: "",
-      search: "",
-    });
+    };
+    setFilters(nextFilters);
+    setCurrentPage(1);
+    fetchProducts(nextFilters, 1);
   };
 
   const addToCart = (product) => {
@@ -103,11 +107,8 @@ export default function Products() {
     window.dispatchEvent(new Event("cartUpdated"));
   };
 
-  // Pagination logic
-  const totalPages = Math.ceil(allProducts.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentProducts = allProducts.slice(startIndex, endIndex);
+  const startIndex = total === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = total === 0 ? 0 : Math.min(startIndex + products.length, total);
 
   if (loading) {
     return (
@@ -152,9 +153,7 @@ export default function Products() {
       {/* Results Info & Mobile Filter Button */}
       <div className="mb-6 flex justify-between items-center flex-wrap gap-3">
         <p className="text-gray-600 font-medium">
-          Showing {allProducts.length === 0 ? 0 : startIndex + 1}-
-          {Math.min(endIndex, allProducts.length)} of {allProducts.length}{" "}
-          products
+          Showing {total === 0 ? 0 : startIndex + 1}-{endIndex} of {total} products
         </p>
         <motion.button
           whileHover={{ scale: 1.05 }}
@@ -168,7 +167,7 @@ export default function Products() {
       </div>
 
       {/* Products Grid */}
-      {currentProducts.length > 0 ? (
+      {products.length > 0 ? (
         <>
           <motion.div
             initial={{ opacity: 0 }}
@@ -176,7 +175,7 @@ export default function Products() {
             transition={{ duration: 0.5 }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12"
           >
-            {currentProducts.map((product, index) => (
+            {products.map((product, index) => (
               <ProductCard
                 key={product._id}
                 product={product}
@@ -195,7 +194,11 @@ export default function Products() {
             <ProductPagination
               currentPage={currentPage}
               totalPages={totalPages}
-              onPageChange={setCurrentPage}
+              onPageChange={(p) => {
+                const nextPage = Math.max(1, Math.min(totalPages, p));
+                setCurrentPage(nextPage);
+                fetchProducts(filters, nextPage);
+              }}
             />
           )}
         </>

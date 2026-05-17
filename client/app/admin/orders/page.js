@@ -10,6 +10,7 @@ export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [search, setSearch] = useState("");
   const router = useRouter();
 
   useEffect(() => { fetchOrders(); }, []);
@@ -44,6 +45,15 @@ export default function AdminOrders() {
     return m[(s || "").toLowerCase()] || <Package className="text-gray-400" size={14} />;
   };
 
+  const q = search.trim().toLowerCase();
+  const filteredOrders = q
+    ? orders.filter((o) => {
+      const id = (o._id || "").toLowerCase();
+      const shortId = id.slice(-8);
+      return id.includes(q) || shortId.includes(q);
+    })
+    : orders;
+
   if (loading) return <div className="flex justify-center items-center min-h-screen"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-600" /></div>;
 
   return (
@@ -53,12 +63,32 @@ export default function AdminOrders() {
         <span className="text-xs text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full">{orders.length} total</span>
       </div>
 
+      <div className="mb-4 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between">
+        <div className="flex-1">
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by Order ID (full or last 8)"
+            className="w-full sm:max-w-md px-3 py-2 text-xs sm:text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+          />
+        </div>
+        {q && (
+          <button
+            onClick={() => setSearch("")}
+            className="px-3 py-2 text-xs sm:text-sm border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 flex items-center justify-center gap-1.5"
+          >
+            <X className="w-4 h-4" />
+            Clear
+          </button>
+        )}
+      </div>
+
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         {/* Mobile card list */}
-        <div className="md:hidden divide-y divide-gray-100">
-          {orders.length === 0 ? (
+        <div className="md:hidden divide-y divide-gray-100 max-h-[70vh] overflow-y-auto">
+          {filteredOrders.length === 0 ? (
             <p className="text-center text-gray-500 py-10 text-sm">No orders yet.</p>
-          ) : orders.map((order) => (
+          ) : filteredOrders.map((order) => (
             <div key={order._id} className="p-4">
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div>
@@ -88,9 +118,9 @@ export default function AdminOrders() {
         </div>
 
         {/* Desktop table */}
-        <div className="hidden md:block overflow-x-auto">
+        <div className="hidden md:block overflow-x-auto max-h-[70vh] overflow-y-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-100">
+            <thead className="bg-gray-50 border-b border-gray-100 sticky top-0 z-10">
               <tr>
                 {["Order ID","Customer","Items","Total","Status","Date","Actions"].map(h => (
                   <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
@@ -98,9 +128,9 @@ export default function AdminOrders() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {orders.length === 0 ? (
+              {filteredOrders.length === 0 ? (
                 <tr><td colSpan={7} className="px-4 py-10 text-center text-gray-500">No orders yet.</td></tr>
-              ) : orders.map((order) => (
+              ) : filteredOrders.map((order) => (
                 <tr key={order._id} className="hover:bg-gray-50">
                   <td className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">#{(order._id || "").slice(-8)}</td>
                   <td className="px-4 py-3">

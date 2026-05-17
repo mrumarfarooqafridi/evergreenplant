@@ -28,7 +28,8 @@ export default function ProductPagination({
         disabled={currentPage === 1}
         className="p-2 sm:p-3 rounded-lg border-2 border-gray-200 hover:border-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
       >
-        <FaChevronLeft size={16} />
+        <FaChevronLeft size={14} className="sm:hidden" />
+        <FaChevronLeft size={16} className="hidden sm:block" />
       </motion.button>
 
       {/* Page Numbers */}
@@ -44,7 +45,7 @@ export default function ProductPagination({
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => onPageChange(page)}
-                className={`px-3 sm:px-4 py-2 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-all ${
+                className={`px-2 sm:px-4 py-1.5 sm:py-3 rounded-lg font-semibold text-xs sm:text-sm transition-all ${
                   currentPage === page
                     ? "bg-primary text-white shadow-lg"
                     : "border-2 border-gray-200 text-gray-700 hover:border-primary hover:bg-green-50"
@@ -65,7 +66,8 @@ export default function ProductPagination({
         disabled={currentPage === totalPages}
         className="p-2 sm:p-3 rounded-lg border-2 border-gray-200 hover:border-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
       >
-        <FaChevronRight size={16} />
+        <FaChevronRight size={14} className="sm:hidden" />
+        <FaChevronRight size={16} className="hidden sm:block" />
       </motion.button>
 
       {/* Page Info */}

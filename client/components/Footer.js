@@ -67,10 +67,10 @@ export default function Footer() {
                 className="space-y-6"
               >
                 <div>
-                  <h3 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  <h3 className="text-lg sm:text-2xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                     Stay Connected with Nature
                   </h3>
-                  <p className="text-gray-300 text-lg">
+                  <p className="text-gray-300 text-xs sm:text-sm md:text-lg">
                     Get the latest updates on new plants, care tips, and
                     exclusive offers delivered to your inbox
                   </p>
@@ -110,7 +110,7 @@ export default function Footer() {
 
       {/* Main Footer Content */}
       <div className="container mx-auto px-4 py-8 sm:py-12 md:py-16">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
           {/* Company Info */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -142,12 +142,12 @@ export default function Footer() {
                 <motion.a
                   key={social.label}
                   href={social.href}
-                  className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-300"
+                  className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-300"
                   aria-label={social.label}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <social.icon className="text-sm" />
+                  <social.icon className="text-xs sm:text-sm" />
                 </motion.a>
               ))}
             </div>
@@ -159,6 +159,7 @@ export default function Footer() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
+            className="hidden md:block"
           >
             <h4 className="text-sm sm:text-base md:text-lg font-semibold mb-4 sm:mb-6 text-white">
               Quick Links
@@ -176,7 +177,7 @@ export default function Footer() {
                   <motion.div whileHover={{ x: 5 }}>
                     <Link
                       href={item.href}
-                      className="text-gray-300 hover:text-primary transition-colors duration-300 flex items-center group"
+                      className="text-gray-300 text-xs sm:text-sm hover:text-primary transition-colors duration-300 flex items-center group"
                     >
                       <span className="w-0 group-hover:w-2 h-0.5 bg-primary transition-all duration-300 mr-0 group-hover:mr-2"></span>
                       {item.label}
@@ -213,9 +214,9 @@ export default function Footer() {
                   <motion.div whileHover={{ x: 5 }}>
                     <Link
                       href={item.href}
-                      className="text-gray-300 hover:text-primary transition-colors duration-300 flex items-center group"
+                      className="text-gray-300 text-xs sm:text-sm hover:text-primary transition-colors duration-300 flex items-center group"
                     >
-                      <item.icon className="w-4 h-4 mr-2 text-primary/70 group-hover:text-primary transition-colors" />
+                      <item.icon className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-primary/70 group-hover:text-primary transition-colors" />
                       {item.label}
                     </Link>
                   </motion.div>
@@ -230,6 +231,7 @@ export default function Footer() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
             viewport={{ once: true }}
+            className="hidden md:block"
           >
             <h4 className="text-sm sm:text-base md:text-lg font-semibold mb-4 sm:mb-6 text-white">
               Contact Info
@@ -250,7 +252,7 @@ export default function Footer() {
                 <FaPhone className="text-primary flex-shrink-0" />
                 <a
                   href="tel:+97144522367"
-                  className="text-gray-300 hover:text-primary transition-colors"
+                  className="text-gray-300 text-xs sm:text-sm md:text-base hover:text-primary transition-colors"
                 >
                   +971 44 522 367
                 </a>
@@ -260,7 +262,7 @@ export default function Footer() {
                 <FaEnvelope className="text-primary flex-shrink-0" />
                 <a
                   href="mailto:muazam@greenie.ae"
-                  className="text-gray-300 hover:text-primary transition-colors"
+                  className="text-gray-300 text-xs sm:text-sm md:text-base hover:text-primary transition-colors"
                 >
                   muazam@greenie.ae
                 </a>
@@ -285,10 +287,10 @@ export default function Footer() {
       <div className="border-t border-gray-700">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-gray-300 text-sm">
+            <p className="text-gray-300 text-xs md:text-sm">
               &copy; 2024 Evergreen Plant Nursery. All rights reserved.
             </p>
-            <div className="flex flex-wrap gap-6 text-sm">
+            <div className="flex flex-wrap gap-3 md:gap-6 text-xs md:text-sm">
               <Link
                 href="/privacy"
                 className="text-gray-300 hover:text-primary transition-colors"

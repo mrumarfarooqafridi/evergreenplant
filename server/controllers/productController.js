@@ -12,35 +12,72 @@ exports.getProducts = async (req, res) => {
     } = req.query;
     const { db } = req;
 
-    let query = db.collection(COLLECTIONS.PRODUCTS);
+    const pageNum = Math.max(1, parseInt(page, 10) || 1);
+    const rawLimit = parseInt(limit, 10) || 10;
+    const limitNum = Math.min(Math.max(1, rawLimit), 100);
 
-    if (category) query = query.where("category", "==", category);
-    if (minPrice) query = query.where("price", ">=", parseFloat(minPrice));
-    if (maxPrice) query = query.where("price", "<=", parseFloat(maxPrice));
+    let baseQuery = db.collection(COLLECTIONS.PRODUCTS);
 
-    const snapshot = await query.orderBy("createdAt", "desc").get();
-    let products = [];
-    snapshot.forEach((doc) => {
-      products.push({ _id: doc.id, id: doc.id, ...doc.data() });
-    });
+    if (category) baseQuery = baseQuery.where("category", "==", category);
+    if (minPrice) baseQuery = baseQuery.where("price", ">=", parseFloat(minPrice));
+    if (maxPrice) baseQuery = baseQuery.where("price", "<=", parseFloat(maxPrice));
 
     if (search) {
+      const snapshot = await baseQuery.orderBy("createdAt", "desc").get();
+      let products = [];
+      snapshot.forEach((doc) => {
+        products.push({ _id: doc.id, id: doc.id, ...doc.data() });
+      });
+
       const s = search.toLowerCase();
       products = products.filter(
         (p) =>
           p.name?.toLowerCase().includes(s) ||
-          p.description?.toLowerCase().includes(s)
+          p.description?.toLowerCase().includes(s),
       );
+
+      const total = products.length;
+      const startIndex = (pageNum - 1) * limitNum;
+      const paginatedProducts = products.slice(startIndex, startIndex + limitNum);
+
+      return res.json({
+        products: paginatedProducts,
+        totalPages: Math.ceil(total / limitNum),
+        currentPage: pageNum,
+        total,
+      });
     }
 
-    const total = products.length;
-    const startIndex = (parseInt(page) - 1) * parseInt(limit);
-    const paginatedProducts = products.slice(startIndex, startIndex + parseInt(limit));
+    let total = 0;
+    try {
+      const countSnapshot = await baseQuery.count().get();
+      total = countSnapshot.data().count || 0;
+    } catch {
+      const fullSnapshot = await baseQuery.get();
+      total = fullSnapshot.size || 0;
+    }
+
+    const usesPriceRange = Boolean(minPrice || maxPrice);
+    let query = baseQuery;
+    if (usesPriceRange) {
+      query = query.orderBy("price", "asc");
+    } else {
+      query = query.orderBy("createdAt", "desc");
+    }
+
+    const offset = (pageNum - 1) * limitNum;
+    query = query.offset(offset).limit(limitNum);
+
+    const snapshot = await query.get();
+    const paginatedProducts = [];
+    snapshot.forEach((doc) => {
+      paginatedProducts.push({ _id: doc.id, id: doc.id, ...doc.data() });
+    });
 
     res.json({
       products: paginatedProducts,
-      totalPages: Math.ceil(total / parseInt(limit)),
-      currentPage: parseInt(page),
+      totalPages: Math.ceil(total / limitNum),
+      currentPage: pageNum,
       total,
     });
   } catch (err) {

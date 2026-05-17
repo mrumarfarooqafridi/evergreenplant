@@ -94,7 +94,7 @@ export default function Header() {
         <div className="flex justify-between items-center">
           <Link
             href="/"
-            className="text-2xl font-bold text-primary flex items-center space-x-2 hover:text-secondary transition-colors"
+            className="md:text-2xl text-sm font-bold text-primary flex items-center space-x-2 hover:text-secondary transition-colors"
             onClick={closeMenus}
           >
             <FaLeaf className="text-green-600" />
@@ -127,7 +127,7 @@ export default function Header() {
               className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
               onClick={closeMenus}
             >
-              <FaShoppingCart className="text-xl text-gray-700 hover:text-primary" />
+              <FaShoppingCart className="text-md md:text-xl text-gray-700 hover:text-primary" />
               {cartCount > 0 && (
                 <motion.span
                   initial={{ scale: 0 }}
@@ -153,7 +153,7 @@ export default function Header() {
                       className="w-8 h-8 rounded-full object-cover border border-gray-200"
                     />
                   ) : (
-                    <FaUserCircle className="text-xl text-gray-700" />
+                    <FaUserCircle className="text-md md:text-xl text-gray-700" />
                   )}
                   <span className="hidden md:block text-sm font-medium text-gray-700">
                     {user.name || user.email}

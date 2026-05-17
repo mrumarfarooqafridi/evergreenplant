@@ -23,6 +23,19 @@ body {
   color: #374151;
   background-color: #f9fafb;
   overflow-x: hidden;
+  font-size: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  body {
+    font-size: 0.875rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    font-size: 1rem;
+  }
 }
 
 h1,
@@ -38,15 +51,15 @@ h6 {
 }
 
 .btn-primary {
-  @apply bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-medium;
+  @apply bg-primary text-white px-3 py-2 text-xs sm:px-6 sm:py-3 sm:text-sm rounded-lg hover:bg-secondary transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-medium;
 }
 
 .btn-secondary {
-  @apply bg-gray-200 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-300 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg font-medium;
+  @apply bg-gray-200 text-gray-800 px-3 py-2 text-xs sm:px-6 sm:py-3 sm:text-sm rounded-lg hover:bg-gray-300 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg font-medium;
 }
 
 .btn-outline {
-  @apply border-2 border-primary text-primary px-6 py-3 rounded-lg hover:bg-primary hover:text-white transition-all duration-300 transform hover:scale-105 font-medium;
+  @apply border-2 border-primary text-primary px-3 py-2 text-xs sm:px-6 sm:py-3 sm:text-sm rounded-lg hover:bg-primary hover:text-white transition-all duration-300 transform hover:scale-105 font-medium;
 }
 
 /* Custom scrollbar */
