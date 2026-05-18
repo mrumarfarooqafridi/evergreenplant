@@ -52,26 +52,27 @@ export default function ProductModal({
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+          className="bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative"
         >
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 bg-gray-200 hover:bg-gray-300 rounded-full transition-all z-10"
+            className="absolute top-2 right-2 sm:top-4 sm:right-4 p-1.5 sm:p-2 bg-gray-200 hover:bg-gray-300 rounded-full transition-all z-10"
           >
-            <FaX size={20} />
+            <FaX size={14} className="sm:hidden" />
+            <FaX size={20} className="hidden sm:block" />
           </button>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 md:p-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 p-3 sm:p-6 md:p-10">
             {/* Image Carousel */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2 sm:gap-4">
               {/* Main Image */}
               <motion.div
                 key={currentImageIndex}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
-                className="relative bg-gray-100 rounded-xl overflow-hidden h-96"
+                className="relative bg-gray-100 rounded-lg sm:rounded-xl overflow-hidden h-48 sm:h-64 md:h-96"
               >
                 <Image
                   src={images[currentImageIndex] || "/placeholder.jpg"}
@@ -83,25 +84,26 @@ export default function ProductModal({
 
               {/* Carousel Navigation */}
               {images.length > 1 && (
-                <div className="flex justify-between items-center gap-4">
+                <div className="flex justify-between items-center gap-2 sm:gap-4">
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={handlePrevImage}
-                    className="p-3 bg-primary hover:bg-green-700 text-white rounded-lg transition-all"
+                    className="p-2 sm:p-3 bg-primary hover:bg-green-700 text-white rounded-lg transition-all"
                   >
-                    <FaChevronLeft size={20} />
+                    <FaChevronLeft size={14} className="sm:hidden" />
+                    <FaChevronLeft size={20} className="hidden sm:block" />
                   </motion.button>
 
                   {/* Thumbnail Images */}
-                  <div className="flex gap-2 flex-1 overflow-x-auto">
+                  <div className="flex gap-1 sm:gap-2 flex-1 overflow-x-auto">
                     {images.map((img, index) => (
                       <motion.button
                         key={index}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setCurrentImageIndex(index)}
-                        className={`relative w-16 h-16 rounded-lg flex-shrink-0 border-2 transition-all ${
+                        className={`relative w-10 h-10 sm:w-16 sm:h-16 rounded-lg flex-shrink-0 border-2 transition-all ${
                           index === currentImageIndex
                             ? "border-primary"
                             : "border-gray-200 hover:border-primary"
@@ -121,61 +123,77 @@ export default function ProductModal({
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={handleNextImage}
-                    className="p-3 bg-primary hover:bg-green-700 text-white rounded-lg transition-all"
+                    className="p-2 sm:p-3 bg-primary hover:bg-green-700 text-white rounded-lg transition-all"
                   >
-                    <FaChevronRight size={20} />
+                    <FaChevronRight size={14} className="sm:hidden" />
+                    <FaChevronRight size={20} className="hidden sm:block" />
                   </motion.button>
                 </div>
               )}
 
               {/* Image Counter */}
               {images.length > 1 && (
-                <p className="text-center text-sm text-gray-600">
+                <p className="text-center text-[10px] sm:text-sm text-gray-600">
                   {currentImageIndex + 1} of {images.length}
                 </p>
               )}
             </div>
 
             {/* Product Details */}
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3 sm:gap-6">
               {/* Title and Rating */}
               <div>
-                <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-3">
+                <h1 className="text-sm sm:text-2xl md:text-4xl font-bold text-gray-800 mb-2 sm:mb-3">
                   {product.name}
                 </h1>
-                <div className="flex items-center gap-2">
-                  <div className="flex gap-1">
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <div className="flex gap-0.5">
+                    {[...Array(5)].map((_, i) => (
+                      <FaStar
+                        key={i}
+                        size={10}
+                        className={`sm:hidden ${
+                          i < Math.round(product.rating || 4)
+                            ? "text-yellow-400"
+                            : "text-gray-300"
+                        }`}
+                      />
+                    ))}
                     {[...Array(5)].map((_, i) => (
                       <FaStar
                         key={i}
                         size={18}
-                        className={
+                        className={`hidden sm:block ${
                           i < Math.round(product.rating || 4)
                             ? "text-yellow-400"
                             : "text-gray-300"
-                        }
+                        }`}
                       />
                     ))}
                   </div>
-                  <span className="text-sm text-gray-600">
+                  <span className="text-[10px] sm:text-sm text-gray-600">
                     ({product.reviews?.length || 0} reviews)
                   </span>
                 </div>
               </div>
 
               {/* Price and Stock */}
-              <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-xl">
-                <div className="flex justify-between items-center mb-3">
+              <div className="bg-gradient-to-r from-green-50 to-green-100 p-2 sm:p-4 rounded-lg sm:rounded-xl">
+                <div className="flex justify-between items-center mb-2 sm:mb-3">
                   <div>
-                    <p className="text-gray-600 text-sm mb-1">Price</p>
-                    <p className="text-3xl md:text-4xl font-bold text-primary">
+                    <p className="text-gray-600 text-[10px] sm:text-sm mb-1">
+                      Price
+                    </p>
+                    <p className="text-lg sm:text-3xl md:text-4xl font-bold text-primary">
                       AED {product.price}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-gray-600 text-sm mb-1">In Stock</p>
+                    <p className="text-gray-600 text-[10px] sm:text-sm mb-1">
+                      In Stock
+                    </p>
                     <p
-                      className={`text-xl font-bold ${
+                      className={`text-sm sm:text-xl font-bold ${
                         product.stock > 0 ? "text-green-600" : "text-red-600"
                       }`}
                     >
@@ -187,18 +205,20 @@ export default function ProductModal({
 
               {/* Category */}
               <div>
-                <p className="text-gray-600 text-sm mb-2">Category</p>
-                <span className="inline-block bg-primary text-white px-4 py-2 rounded-full text-sm font-semibold capitalize">
+                <p className="text-gray-600 text-[10px] sm:text-sm mb-1 sm:mb-2">
+                  Category
+                </p>
+                <span className="inline-block bg-primary text-white px-2 sm:px-4 py-1 sm:py-2 rounded-full text-[8px] sm:text-sm font-semibold capitalize">
                   {product.category}
                 </span>
               </div>
 
               {/* Description */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                <h3 className="text-xs sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3">
                   Description
                 </h3>
-                <p className="text-gray-700 leading-relaxed">
+                <p className="text-gray-700 text-[10px] sm:text-sm leading-relaxed">
                   {product.description}
                 </p>
               </div>
@@ -206,16 +226,16 @@ export default function ProductModal({
               {/* Additional Info */}
               {product.features && product.features.length > 0 && (
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                  <h3 className="text-xs sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3">
                     Features
                   </h3>
-                  <ul className="space-y-2">
+                  <ul className="space-y-1 sm:space-y-2">
                     {product.features.map((feature, index) => (
                       <li
                         key={index}
-                        className="text-gray-700 flex items-center gap-2"
+                        className="text-gray-700 text-[10px] sm:text-sm flex items-center gap-1 sm:gap-2"
                       >
-                        <span className="w-2 h-2 bg-primary rounded-full"></span>
+                        <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-primary rounded-full"></span>
                         {feature}
                       </li>
                     ))}
@@ -224,22 +244,23 @@ export default function ProductModal({
               )}
 
               {/* Action Buttons */}
-              <div className="flex gap-3 mt-6">
+              <div className="flex gap-2 sm:gap-3 mt-3 sm:mt-6">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleAddToCart}
                   disabled={product.stock === 0}
-                  className="flex-1 bg-primary hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 px-6 rounded-lg text-lg transition-all flex items-center justify-center gap-2"
+                  className="flex-1 bg-primary hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-2 sm:py-4 px-2 sm:px-6 rounded-lg text-[10px] sm:text-lg transition-all flex items-center justify-center gap-1 sm:gap-2"
                 >
-                  <FaPlus size={20} />
-                  Add to Cart
+                  <FaPlus size={12} className="sm:hidden" />
+                  <FaPlus size={20} className="hidden sm:block" />
+                  <span className="text-[10px] sm:text-base">Add to Cart</span>
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={onClose}
-                  className="flex-1 border-2 border-gray-300 hover:border-gray-400 text-gray-700 font-bold py-4 px-6 rounded-lg text-lg transition-all"
+                  className="flex-1 border-2 border-gray-300 hover:border-gray-400 text-gray-700 font-bold py-2 sm:py-4 px-2 sm:px-6 rounded-lg text-[10px] sm:text-lg transition-all"
                 >
                   Close
                 </motion.button>

@@ -170,10 +170,10 @@ export default function FeaturedProducts() {
             }
           `}</style>
           <Swiper
-            slidesPerView={2}
-            spaceBetween={10}
+            slidesPerView={3}
+            spaceBetween={8}
             breakpoints={{
-              480: { slidesPerView: 2, spaceBetween: 12 },
+              480: { slidesPerView: 3, spaceBetween: 10 },
               640: { slidesPerView: 3, spaceBetween: 16 },
               1024: { slidesPerView: 3, spaceBetween: 24 },
               1280: { slidesPerView: 4, spaceBetween: 24 },
@@ -193,157 +193,152 @@ export default function FeaturedProducts() {
           >
             {products.map((product, index) => (
               <SwiperSlide key={product._id}>
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.5,
-                    delay: index * 0.08,
-                    ease: "easeOut",
-                  }}
-                  viewport={{ once: true }}
-                  whileHover={{
-                    y: -8,
-                    transition: { duration: 0.25 },
-                  }}
-                  className="bg-white rounded-2xl shadow-lg hover:shadow-xl overflow-hidden border border-gray-100 h-full transition-all duration-300"
-                >
-                  {/* Compact Image Section */}
-                  <div className="relative overflow-hidden bg-gradient-to-br from-green-50 to-gray-50">
-                    <motion.div
-                      whileHover={{ scale: 1.08 }}
-                      transition={{ duration: 0.3 }}
-                      className="relative h-48"
-                    >
-                      <Image
-                        src={product.images[0] || "/plant-placeholder.svg"}
-                        alt={product.name}
-                        width={400}
-                        height={192}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-                    </motion.div>
+                <Link href="/products">
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.5,
+                      delay: index * 0.08,
+                      ease: "easeOut",
+                    }}
+                    viewport={{ once: true }}
+                    whileHover={{
+                      y: -4,
+                      transition: { duration: 0.25 },
+                    }}
+                    className="bg-white rounded-xl shadow-lg hover:shadow-xl overflow-hidden border border-gray-100 h-full transition-all duration-300 cursor-pointer"
+                  >
+                    {/* Square Image Section - Small Screen */}
+                    <div className="relative overflow-hidden bg-gradient-to-br from-green-50 to-gray-50 aspect-square">
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.3 }}
+                        className="relative w-full h-full"
+                      >
+                        <Image
+                          src={product.images[0] || "/plant-placeholder.svg"}
+                          alt={product.name}
+                          width={200}
+                          height={200}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      </motion.div>
 
-                    {/* Compact Rating Badge */}
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      whileInView={{ scale: 1 }}
-                      transition={{ delay: 0.3, type: "spring" }}
-                      viewport={{ once: true }}
-                      className="absolute top-3 right-3 bg-white shadow-md rounded-full p-2"
-                    >
-                      <div className="flex items-center space-x-1">
-                        <FaStar className="text-yellow-400 text-xs" />
-                        <span className="text-xs font-bold text-gray-700">
-                          4.8
+                      {/* Category Badge - Small Screen */}
+                      <div className="absolute bottom-2 left-2 right-2">
+                        <span className="bg-primary/90 backdrop-blur-sm text-white px-2 py-1 rounded-lg text-[8px] sm:text-xs font-semibold uppercase text-center block">
+                          {product.category}
                         </span>
                       </div>
-                    </motion.div>
 
-                    {/* Compact Stock Badge */}
-                    {product.stock < 10 && (
+                      {/* Rating Badge - Hidden on small screens */}
                       <motion.div
-                        initial={{ x: -50 }}
-                        whileInView={{ x: 0 }}
-                        transition={{ delay: 0.2, type: "spring" }}
+                        initial={{ scale: 0 }}
+                        whileInView={{ scale: 1 }}
+                        transition={{ delay: 0.3, type: "spring" }}
                         viewport={{ once: true }}
-                        className="absolute top-3 left-3 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow-md"
+                        className="hidden sm:flex absolute top-3 right-3 bg-white shadow-md rounded-full p-2"
                       >
-                        Low Stock
-                      </motion.div>
-                    )}
-
-                    {/* Compact Quick View Overlay */}
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      whileHover={{ opacity: 1 }}
-                      transition={{ duration: 0.25 }}
-                      className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300"
-                    >
-                      <Link
-                        href={`/products/${product._id}`}
-                        className="bg-white text-gray-800 px-5 py-2 rounded-lg font-semibold hover:bg-gray-50 transition-all duration-300 flex items-center space-x-2 shadow-lg text-sm"
-                      >
-                        <FaEye className="text-sm" />
-                        <span>View</span>
-                      </Link>
-                    </motion.div>
-                  </div>
-
-                  {/* Compact Content Section */}
-                  <div className="p-5 bg-white flex flex-col justify-between h-full">
-                    <div>
-                      <motion.h3
-                        className="text-lg font-bold mb-2 text-gray-900 line-clamp-2"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ delay: 0.2 }}
-                        viewport={{ once: true }}
-                      >
-                        {product.name}
-                      </motion.h3>
-
-                      <motion.p
-                        className="text-gray-600 mb-4 leading-snug text-xs line-clamp-2"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ delay: 0.25 }}
-                        viewport={{ once: true }}
-                      >
-                        {product.description}
-                      </motion.p>
-                    </div>
-
-                    <div>
-                      <motion.div
-                        className="flex items-center justify-between mb-4"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ delay: 0.3 }}
-                        viewport={{ once: true }}
-                      >
-                        <div>
-                          <p className="text-2xl font-bold text-green-600">
-                            AED {product.price}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {product.stock} in stock
-                          </p>
+                        <div className="flex items-center space-x-1">
+                          <FaStar className="text-yellow-400 text-xs" />
+                          <span className="text-xs font-bold text-gray-700">
+                            4.8
+                          </span>
                         </div>
-                        <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold">
-                          Premium
-                        </span>
                       </motion.div>
 
-                      {/* Compact Action Buttons */}
-                      <motion.div
-                        className="flex gap-3"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ delay: 0.35 }}
-                        viewport={{ once: true }}
-                      >
-                        <Link
-                          href={`/products/${product._id}`}
-                          className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 hover:border-green-400 text-center transition-all duration-300"
+                      {/* Stock Badge - Hidden on small screens */}
+                      {product.stock < 10 && (
+                        <motion.div
+                          initial={{ x: -50 }}
+                          whileInView={{ x: 0 }}
+                          transition={{ delay: 0.2, type: "spring" }}
+                          viewport={{ once: true }}
+                          className="hidden sm:flex absolute top-3 left-3 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow-md"
                         >
-                          Details
-                        </Link>
-                        <motion.button
-                          onClick={() => addToCart(product)}
-                          whileHover={{ scale: 1.03 }}
-                          whileTap={{ scale: 0.97 }}
-                          className="flex-1 rounded-lg bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 text-xs font-semibold hover:from-green-600 hover:to-green-700 shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center space-x-1"
-                        >
-                          <FaShoppingCart className="text-xs" />
-                          <span>Cart</span>
-                        </motion.button>
-                      </motion.div>
+                          Low Stock
+                        </motion.div>
+                      )}
                     </div>
-                  </div>
-                </motion.div>
+
+                    {/* Content Section - Hidden on small screens */}
+                    <div className="hidden sm:flex p-5 bg-white flex-col justify-between h-full">
+                      <div>
+                        <motion.h3
+                          className="text-lg font-bold mb-2 text-gray-900 line-clamp-2"
+                          initial={{ opacity: 0 }}
+                          whileInView={{ opacity: 1 }}
+                          transition={{ delay: 0.2 }}
+                          viewport={{ once: true }}
+                        >
+                          {product.name}
+                        </motion.h3>
+
+                        <motion.p
+                          className="text-gray-600 mb-4 leading-snug text-xs line-clamp-2"
+                          initial={{ opacity: 0 }}
+                          whileInView={{ opacity: 1 }}
+                          transition={{ delay: 0.25 }}
+                          viewport={{ once: true }}
+                        >
+                          {product.description}
+                        </motion.p>
+                      </div>
+
+                      <div>
+                        <motion.div
+                          className="flex items-center justify-between mb-4"
+                          initial={{ opacity: 0 }}
+                          whileInView={{ opacity: 1 }}
+                          transition={{ delay: 0.3 }}
+                          viewport={{ once: true }}
+                        >
+                          <div>
+                            <p className="text-2xl font-bold text-green-600">
+                              AED {product.price}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {product.stock} in stock
+                            </p>
+                          </div>
+                          <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold">
+                            Premium
+                          </span>
+                        </motion.div>
+
+                        {/* Compact Action Buttons */}
+                        <motion.div
+                          className="flex gap-3"
+                          initial={{ opacity: 0 }}
+                          whileInView={{ opacity: 1 }}
+                          transition={{ delay: 0.35 }}
+                          viewport={{ once: true }}
+                        >
+                          <Link
+                            href={`/products/${product._id}`}
+                            className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 hover:border-green-400 text-center transition-all duration-300"
+                          >
+                            Details
+                          </Link>
+                          <motion.button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              addToCart(product);
+                            }}
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.97 }}
+                            className="flex-1 rounded-lg bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 text-xs font-semibold hover:from-green-600 hover:to-green-700 shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center space-x-1"
+                          >
+                            <FaShoppingCart className="text-xs" />
+                            <span>Cart</span>
+                          </motion.button>
+                        </motion.div>
+                      </div>
+                    </div>
+                  </motion.div>
+                </Link>
               </SwiperSlide>
             ))}
           </Swiper>
