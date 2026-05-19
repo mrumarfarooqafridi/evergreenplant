@@ -1,14 +1,24 @@
 import "./globals.css";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Playfair_Display, Poppins } from "next/font/google";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ClientLayout from "../components/ClientLayout";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
 const playfair = Playfair_Display({
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-playfair",
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-poppins",
 });
 
 export const metadata = {
@@ -114,7 +124,9 @@ export default function RootLayout({ children }) {
           }}
         />
       </head>
-      <body className={`${inter.className} ${playfair.variable} antialiased`}>
+      <body
+        className={`${inter.className} ${playfair.variable} ${poppins.variable} antialiased font-sans`}
+      >
         <ClientLayout>
           <Header />
           <main className="min-h-screen">{children}</main>
