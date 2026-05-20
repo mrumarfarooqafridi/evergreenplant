@@ -219,8 +219,8 @@ export default function FeaturedProducts() {
                         <Image
                           src={product.images[0] || "/plant-placeholder.svg"}
                           alt={product.name}
-                          width={200}
-                          height={200}
+                          width={70}
+                          height={70}
                           className="w-full h-full object-cover"
                           loading="lazy"
                         />

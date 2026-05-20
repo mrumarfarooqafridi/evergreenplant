@@ -63,13 +63,13 @@ export default function About() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 py-20 md:py-32 overflow-hidden">
+      <section className="relative bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 py-12 sm:py-16 md:py-20 lg:py-32 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 left-20 w-72 h-72 bg-green-400 rounded-full filter blur-3xl"></div>
           <div className="absolute bottom-20 right-20 w-96 h-96 bg-emerald-400 rounded-full filter blur-3xl"></div>
         </div>
 
-        <div className="container mx-auto px-4 relative">
+        <div className="container mx-auto px-3 sm:px-4 relative">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -80,13 +80,15 @@ export default function About() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center space-x-2 bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-semibold mb-6"
+              className="inline-flex items-center space-x-1 sm:space-x-2 bg-green-100 text-green-800 px-2 sm:px-4 py-1 sm:py-2 rounded-full text-[8px] sm:text-sm font-semibold mb-3 sm:mb-6"
             >
-              <Leaf className="w-4 h-4" />
-              <span>About Evergreen Nursery</span>
+              <Leaf className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="text-[8px] sm:text-sm">
+                About Evergreen Nursery
+              </span>
             </motion.div>
 
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-lg sm:text-4xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 mb-3 sm:mb-6 leading-tight">
               Growing{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-600">
                 Inspiration
@@ -94,7 +96,7 @@ export default function About() {
               and Green Spaces
             </h1>
 
-            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
+            <p className="text-[10px] sm:text-sm md:text-base lg:text-xl text-gray-600 max-w-3xl mx-auto mb-4 sm:mb-8 leading-relaxed">
               Evergreen Nursery brings premium indoor and outdoor plants to UAE
               homes and offices with thoughtful care, expert guidance, and a
               love for sustainable greenery.
@@ -104,17 +106,17 @@ export default function About() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
+              className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center"
             >
               <Link
                 href="/products"
-                className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl"
+                className="inline-flex items-center justify-center px-4 sm:px-8 py-2 sm:py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-lg sm:rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl text-[10px] sm:text-sm"
               >
                 Explore Our Plants
               </Link>
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center px-8 py-4 bg-white text-gray-900 font-semibold rounded-xl border-2 border-gray-200 hover:border-green-600 hover:text-green-600 transition-all"
+                className="inline-flex items-center justify-center px-4 sm:px-8 py-2 sm:py-4 bg-white text-gray-900 font-semibold rounded-lg sm:rounded-xl border-2 border-gray-200 hover:border-green-600 hover:text-green-600 transition-all text-[10px] sm:text-sm"
               >
                 Contact Us
               </Link>

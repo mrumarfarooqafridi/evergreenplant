@@ -113,15 +113,15 @@ export default function Testimonials() {
                     />
                   ))}
                 </div>
-                <p className="text-gray-600 mb-2 sm:mb-4 md:mb-6 text-[8px] sm:text-xs md:text-sm leading-snug italic line-clamp-3 sm:line-clamp-none">
+                <p className="text-gray-600 mb-2 sm:mb-4 md:mb-6 text-[6px] sm:text-xs md:text-sm leading-snug italic line-clamp-3 sm:line-clamp-none">
                   &ldquo;{testimonial.text}&rdquo;
                 </p>
               </div>
               <div className="border-t pt-1.5 sm:pt-3 md:pt-4">
-                <p className="font-bold text-gray-900 text-[9px] sm:text-xs md:text-base">
+                <p className="font-bold text-gray-900 text-[8px] sm:text-xs md:text-base">
                   {testimonial.name}
                 </p>
-                <p className="text-[8px] sm:text-[10px] md:text-xs text-gray-500">
+                <p className="text-[6px] sm:text-[10px] md:text-xs text-gray-500">
                   Happy Customer
                 </p>
               </div>

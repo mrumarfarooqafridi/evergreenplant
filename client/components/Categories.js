@@ -56,9 +56,29 @@ export default function Categories() {
           {categories.map((category) => (
             <motion.div key={category.slug} variants={itemVariants}>
               <Link href={`/products?category=${category.slug}`}>
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer group">
+                <div
+                  className={`bg-white rounded-xl shadow-sm border border-gray-100 cursor-pointer group ${
+                    category.slug === "indoor"
+                      ? "hover:shadow-[0_8px_30px_rgba(34,197,94,0.3)]"
+                      : category.slug === "outdoor"
+                        ? "hover:shadow-[0_8px_30px_rgba(251,191,36,0.3)]"
+                        : category.slug === "succulents"
+                          ? "hover:shadow-[0_8px_30px_rgba(168,85,247,0.3)]"
+                          : "hover:shadow-[0_8px_30px_rgba(236,72,153,0.3)]"
+                  } transition-shadow duration-300`}
+                >
                   <div className="p-3 sm:p-5 flex flex-col items-center justify-center text-center gap-2 sm:gap-3">
-                    <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
+                    <div
+                      className={`w-9 h-9 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform ${
+                        category.slug === "indoor"
+                          ? "bg-gradient-to-br from-green-500 to-emerald-600"
+                          : category.slug === "outdoor"
+                            ? "bg-gradient-to-br from-amber-500 to-orange-600"
+                            : category.slug === "succulents"
+                              ? "bg-gradient-to-br from-purple-500 to-violet-600"
+                              : "bg-gradient-to-br from-pink-500 to-rose-600"
+                      }`}
+                    >
                       <category.Icon className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
                     <h3 className="font-semibold text-[11px] sm:text-base text-gray-800 group-hover:text-primary transition-colors leading-tight">

@@ -64,33 +64,30 @@ export default function ProductFilters({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4"
+              className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4"
             >
-              <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
+              <div className="bg-white rounded-lg sm:rounded-2xl shadow-2xl max-w-sm sm:max-w-2xl w-full max-h-[85vh] sm:max-h-[90vh] overflow-y-auto relative">
                 {/* Header */}
-                <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
-                  <h2 className="text-sm sm:text-lg md:text-xl font-bold text-gray-800">
+                <div className="flex items-center justify-between p-2 sm:p-4 md:p-6 border-b border-gray-200">
+                  <h2 className="text-[10px] sm:text-lg md:text-xl font-bold text-gray-800">
                     Filter Products
                   </h2>
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition-all"
+                    className="p-1 sm:p-2 hover:bg-gray-100 rounded-full transition-all"
                   >
-                    <FaX size={14} className="sm:hidden" />
+                    <FaX size={12} className="sm:hidden" />
                     <FaX size={20} className="hidden sm:block" />
                   </button>
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="p-4 sm:p-6">
-                  <div className="space-y-4 sm:space-y-6">
+                <form onSubmit={handleSubmit} className="p-2 sm:p-4 md:p-6">
+                  <div className="space-y-2 sm:space-y-4 md:space-y-6">
                     {/* Search Input */}
                     <div className="flex flex-col">
-                      <label className="text-[10px] sm:text-xs md:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2 uppercase tracking-wide flex items-center gap-2">
-                        <FaSearch
-                          size={10}
-                          className="text-primary sm:hidden"
-                        />
+                      <label className="text-[8px] sm:text-xs md:text-sm font-semibold text-gray-700 mb-1 sm:mb-2 uppercase tracking-wide flex items-center gap-1 sm:gap-2">
+                        <FaSearch size={8} className="text-primary sm:hidden" />
                         <FaSearch
                           size={14}
                           className="text-primary hidden sm:block"
@@ -102,15 +99,15 @@ export default function ProductFilters({
                         name="search"
                         value={filters.search}
                         onChange={onFilterChange}
-                        className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 transition-all text-xs sm:text-sm md:text-base placeholder-gray-400"
+                        className="w-full px-2 sm:px-4 py-1 sm:py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 transition-all text-[8px] sm:text-sm md:text-base placeholder-gray-400"
                         placeholder="Search plants..."
                       />
                     </div>
 
                     {/* Category Select */}
                     <div className="flex flex-col">
-                      <label className="text-[10px] sm:text-xs md:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2 uppercase tracking-wide flex items-center gap-2">
-                        <FaTag size={10} className="text-primary sm:hidden" />
+                      <label className="text-[8px] sm:text-xs md:text-sm font-semibold text-gray-700 mb-1 sm:mb-2 uppercase tracking-wide flex items-center gap-1 sm:gap-2">
+                        <FaTag size={8} className="text-primary sm:hidden" />
                         <FaTag
                           size={14}
                           className="text-primary hidden sm:block"
@@ -121,7 +118,7 @@ export default function ProductFilters({
                         name="category"
                         value={filters.category}
                         onChange={onFilterChange}
-                        className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 transition-all text-xs sm:text-sm md:text-base cursor-pointer bg-white"
+                        className="w-full px-2 sm:px-4 py-1 sm:py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 transition-all text-[8px] sm:text-sm md:text-base cursor-pointer bg-white"
                       >
                         {categories.map((cat) => (
                           <option key={cat.value} value={cat.value}>
@@ -132,11 +129,11 @@ export default function ProductFilters({
                     </div>
 
                     {/* Price Range */}
-                    <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                    <div className="grid grid-cols-2 gap-2 sm:gap-4">
                       <div className="flex flex-col">
-                        <label className="text-[10px] sm:text-xs md:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2 uppercase tracking-wide flex items-center gap-2">
+                        <label className="text-[8px] sm:text-xs md:text-sm font-semibold text-gray-700 mb-1 sm:mb-2 uppercase tracking-wide flex items-center gap-1 sm:gap-2">
                           <FaDollarSign
-                            size={10}
+                            size={8}
                             className="text-primary sm:hidden"
                           />
                           <FaDollarSign
@@ -150,15 +147,15 @@ export default function ProductFilters({
                           name="minPrice"
                           value={filters.minPrice}
                           onChange={onFilterChange}
-                          className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 transition-all text-xs sm:text-sm md:text-base placeholder-gray-400"
+                          className="w-full px-2 sm:px-4 py-1 sm:py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 transition-all text-[8px] sm:text-sm md:text-base placeholder-gray-400"
                           placeholder="Min"
                         />
                       </div>
 
                       <div className="flex flex-col">
-                        <label className="text-[10px] sm:text-xs md:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2 uppercase tracking-wide flex items-center gap-2">
+                        <label className="text-[8px] sm:text-xs md:text-sm font-semibold text-gray-700 mb-1 sm:mb-2 uppercase tracking-wide flex items-center gap-1 sm:gap-2">
                           <FaDollarSign
-                            size={10}
+                            size={8}
                             className="text-primary sm:hidden"
                           />
                           <FaDollarSign
@@ -172,7 +169,7 @@ export default function ProductFilters({
                           name="maxPrice"
                           value={filters.maxPrice}
                           onChange={onFilterChange}
-                          className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 transition-all text-xs sm:text-sm md:text-base placeholder-gray-400"
+                          className="w-full px-2 sm:px-4 py-1 sm:py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 transition-all text-[8px] sm:text-sm md:text-base placeholder-gray-400"
                           placeholder="Max"
                         />
                       </div>
@@ -180,17 +177,17 @@ export default function ProductFilters({
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-2 sm:gap-3 mt-6 sm:mt-8">
+                  <div className="flex gap-1 sm:gap-3 mt-3 sm:mt-6 md:mt-8">
                     <button
                       type="submit"
-                      className="flex-1 bg-primary hover:bg-green-700 text-white font-semibold px-4 sm:px-6 py-2 sm:py-3 rounded-lg transition-all text-[10px] sm:text-sm md:text-base uppercase tracking-wide"
+                      className="flex-1 bg-primary hover:bg-green-700 text-white font-semibold px-2 sm:px-6 py-1 sm:py-3 rounded-lg transition-all text-[8px] sm:text-sm md:text-base uppercase tracking-wide"
                     >
                       Apply Filters
                     </button>
                     <button
                       type="button"
                       onClick={handleReset}
-                      className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-4 sm:px-6 py-2 sm:py-3 rounded-lg transition-all text-[10px] sm:text-sm md:text-base uppercase tracking-wide"
+                      className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-2 sm:px-6 py-1 sm:py-3 rounded-lg transition-all text-[8px] sm:text-sm md:text-base uppercase tracking-wide"
                     >
                       Reset
                     </button>
