@@ -23,26 +23,32 @@ const poppins = Poppins({
 
 export const metadata = {
   metadataBase: new URL("https://evergreen-nursery.ae"),
-  title: "Evergreen Plant Nursery | Premium Plants in UAE",
+  title: {
+    default: "Evergreen Plant Nursery | Premium Plants in UAE",
+    template: "%s | Evergreen Nursery",
+  },
   description:
-    "Discover a world of beautiful plants, expert care tips, and everything you need to create your perfect green space. Premium plant nursery in UAE with fast delivery.",
+    "Discover a world of beautiful plants, expert care tips, and everything you need to create your perfect green space. Premium plant nursery in UAE with fast delivery across Dubai and the Emirates.",
   keywords:
-    "plants, nursery, UAE, indoor plants, outdoor plants, succulents, flowering plants, plant care, gardening",
+    "plants, nursery, UAE, Dubai, indoor plants, outdoor plants, succulents, flowering plants, plant care, gardening, houseplants, office plants, plant delivery, plant shop",
   authors: [{ name: "Evergreen Nursery" }],
   creator: "Evergreen Nursery",
   publisher: "Evergreen Nursery",
+  alternates: {
+    canonical: "https://evergreen-nursery.ae",
+  },
   openGraph: {
     title: "Evergreen Plant Nursery | Premium Plants in UAE",
     description:
-      "Discover a world of beautiful plants, expert care tips, and everything you need to create your perfect green space.",
+      "Discover a world of beautiful plants, expert care tips, and everything you need to create your perfect green space. Premium plant nursery in UAE.",
     url: "https://evergreen-nursery.ae",
     siteName: "Evergreen Nursery",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/HeroBackground.png",
         width: 1200,
         height: 630,
-        alt: "Evergreen Plant Nursery",
+        alt: "Evergreen Plant Nursery - Premium Plants in UAE",
       },
     ],
     locale: "en_AE",
@@ -53,7 +59,7 @@ export const metadata = {
     title: "Evergreen Plant Nursery | Premium Plants in UAE",
     description:
       "Discover a world of beautiful plants, expert care tips, and everything you need to create your perfect green space.",
-    images: ["/og-image.jpg"],
+    images: ["/HeroBackground.png"],
   },
   robots: {
     index: true,
@@ -75,24 +81,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/favicon.ico" />
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/apple-touch-icon.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href="/favicon-32x32.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="/favicon-16x16.png"
-        />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicon.svg" />
         <link rel="manifest" href="/site.webmanifest" />
         <meta name="theme-color" content="#22c55e" />
         <meta

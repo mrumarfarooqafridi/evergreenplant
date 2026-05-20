@@ -56,7 +56,7 @@ export default function ProductCard({
         <div className="relative h-15 sm:h-56 md:h-64 bg-gray-100 overflow-hidden rounded-t-xl">
           <div className="w-full h-full flex items-center justify-center p-1">
             <Image
-              src={product.images?.[0] || "/placeholder.jpg"}
+              src={product.images?.[0] || "/plant-placeholder.svg"}
               alt={product.name}
               width={60}
               height={60}

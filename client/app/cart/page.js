@@ -69,95 +69,109 @@ export default function Cart() {
         Shopping Cart
       </h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
+        <div className="lg:col-span-2 space-y-2 sm:space-y-4">
           {cart.map((item, index) => (
             <div
               key={index}
-              className="flex items-center gap-2 sm:gap-4 bg-white p-2 sm:p-4 rounded-lg shadow-md mb-2 sm:mb-4 border border-gray-100"
+              className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 bg-white p-3 sm:p-4 rounded-lg shadow-md border border-gray-100 overflow-hidden"
             >
-              <Image
-                src={item.product.images[0] || "/placeholder.jpg"}
-                alt={item.product.name}
-                width={100}
-                height={100}
-                className="w-16 h-16 sm:w-24 sm:h-24 object-cover rounded"
-              />
+              <div className="relative w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0">
+                <Image
+                  src={item.product.images[0] || "/plant-placeholder.svg"}
+                  alt={item.product.name}
+                  width={100}
+                  height={100}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              </div>
 
-              <div className="flex-1">
-                <h3 className="text-xs sm:text-sm md:text-lg font-semibold">
+              <div className="flex-1 min-w-0">
+                <h3 className="text-xs sm:text-sm md:text-base font-semibold text-gray-900 mb-1 line-clamp-2">
                   {item.product.name}
                 </h3>
-                <p className="text-gray-600 text-[10px] sm:text-sm md:text-base">
+                <p className="text-gray-600 text-[10px] sm:text-xs md:text-sm mb-2">
                   AED {item.product.price}
                 </p>
+                {item.product.category && (
+                  <span className="inline-block px-2 py-0.5 bg-green-100 text-green-700 text-[8px] sm:text-xs rounded-full">
+                    {item.product.category}
+                  </span>
+                )}
               </div>
 
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => updateQuantity(index, item.quantity - 1)}
-                  className="px-2 py-1 border rounded"
-                >
-                  -
-                </button>
-                <span className="px-2 sm:px-3 py-1 border rounded text-[10px] sm:text-sm">
-                  {item.quantity}
-                </span>
-                <button
-                  onClick={() => updateQuantity(index, item.quantity + 1)}
-                  className="px-2 py-1 border rounded"
-                >
-                  +
-                </button>
+              <div className="flex flex-row sm:flex-col items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-start">
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <button
+                    onClick={() => updateQuantity(index, item.quantity - 1)}
+                    className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
+                  >
+                    -
+                  </button>
+                  <span className="w-8 sm:w-10 text-center text-xs sm:text-sm font-medium">
+                    {item.quantity}
+                  </span>
+                  <button
+                    onClick={() => updateQuantity(index, item.quantity + 1)}
+                    className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
 
-              <div className="text-right">
-                <p className="font-semibold text-[10px] sm:text-sm md:text-base">
+              <div className="flex flex-row sm:flex-col items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                <p className="font-semibold text-sm sm:text-base text-gray-900">
                   AED {(item.product.price * item.quantity).toFixed(2)}
                 </p>
                 <button
                   onClick={() => removeItem(index)}
-                  className="text-red-500 hover:text-red-700 mt-2"
+                  className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-colors"
+                  aria-label="Remove item"
                 >
-                  <FaTrash />
+                  <FaTrash className="w-4 h-4" />
                 </button>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="bg-white p-3 sm:p-6 rounded-lg shadow-md h-fit border border-gray-100">
-          <h2 className="text-sm sm:text-xl font-semibold mb-2 sm:mb-4">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md h-fit border border-gray-100 sticky top-4">
+          <h2 className="text-sm sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-900">
             Order Summary
           </h2>
 
-          <div className="flex justify-between mb-2">
-            <span className="text-[10px] sm:text-sm">Subtotal</span>
-            <span>AED {total.toFixed(2)}</span>
+          <div className="space-y-2 sm:space-y-3 mb-4">
+            <div className="flex justify-between text-[10px] sm:text-sm">
+              <span className="text-gray-600">Subtotal</span>
+              <span className="font-medium text-gray-900">
+                AED {total.toFixed(2)}
+              </span>
+            </div>
+
+            <div className="flex justify-between text-[10px] sm:text-sm">
+              <span className="text-gray-600">Shipping</span>
+              <span className="font-medium text-green-600">Free</span>
+            </div>
           </div>
 
-          <div className="flex justify-between mb-2">
-            <span className="text-[10px] sm:text-sm">Shipping</span>
-            <span className="text-[10px] sm:text-sm">Free</span>
-          </div>
+          <hr className="my-3 sm:my-4 border-gray-200" />
 
-          <hr className="my-4" />
-
-          <div className="flex justify-between text-sm sm:text-xl font-semibold mb-3 sm:mb-6">
-            <span className="text-[10px] sm:text-sm">Total</span>
-            <span>AED {total.toFixed(2)}</span>
+          <div className="flex justify-between text-base sm:text-xl font-bold mb-4 sm:mb-6">
+            <span className="text-gray-900">Total</span>
+            <span className="text-green-600">AED {total.toFixed(2)}</span>
           </div>
 
           <Link
             href="/checkout"
-            className="btn-primary w-full block text-center"
+            className="btn-primary w-full block text-center py-3 sm:py-4 text-xs sm:text-sm font-semibold"
           >
             Proceed to Checkout
           </Link>
 
           <Link
             href="/products"
-            className="block text-center mt-4 text-primary hover:underline"
+            className="block text-center mt-3 sm:mt-4 text-primary hover:text-green-700 text-[10px] sm:text-sm font-medium transition-colors"
           >
             Continue Shopping
           </Link>

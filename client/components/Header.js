@@ -89,19 +89,20 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-white shadow-lg sticky top-0 z-50">
-      <div className="container mx-auto px-5 sm:px-4 py-3 sm:py-5">
-        <div className="flex items-center justify-between gap-3">
+    <header className="bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-gray-100">
+      <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-3 md:py-4">
+        <div className="flex items-center justify-between gap-2 sm:gap-3">
           <Link
             href="/"
-            className="text-lg sm:text-xl md:text-2xl font-bold text-primary flex items-center gap-2 hover:text-secondary transition-colors shrink-0"
+            className="text-sm sm:text-base md:text-xl lg:text-2xl font-bold text-primary flex items-center gap-1.5 sm:gap-2 hover:text-secondary transition-colors shrink-0"
             onClick={closeMenus}
           >
-            <FaLeaf className="text-green-600" />
-            <span>Evergreen Nursery</span>
+            <FaLeaf className="text-green-600 w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+            <span className="hidden sm:inline">Evergreen Nursery</span>
+            <span className="sm:hidden">Evergreen</span>
           </Link>
 
-          <nav className="hidden lg:flex space-x-8">
+          <nav className="hidden lg:flex space-x-6 md:space-x-8">
             {[
               { href: "/", label: "Home" },
               { href: "/products", label: "Products" },
@@ -112,7 +113,7 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-gray-700 hover:text-primary transition-colors font-medium relative group"
+                className="text-sm md:text-base text-gray-700 hover:text-primary transition-colors font-medium relative group"
                 onClick={closeMenus}
               >
                 {item.label}
@@ -121,18 +122,18 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2 md:gap-4 shrink-0">
             <Link
               href="/cart"
-              className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="relative p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition-colors"
               onClick={closeMenus}
             >
-              <FaShoppingCart className="text-lg md:text-xl text-gray-700 hover:text-primary" />
+              <FaShoppingCart className="text-sm sm:text-base md:text-xl text-gray-700 hover:text-primary" />
               {cartCount > 0 && (
                 <motion.span
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs px-2 py-1 min-w-[20px] text-center font-bold shadow-lg"
+                  className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-full text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 min-w-[16px] sm:min-w-[20px] text-center font-bold shadow-lg"
                 >
                   {cartCount > 99 ? "99+" : cartCount}
                 </motion.span>
@@ -143,19 +144,19 @@ export default function Header() {
               <div className="relative">
                 <button
                   onClick={toggleUserMenu}
-                  className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  className="flex items-center space-x-1.5 sm:space-x-2 p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition-colors"
                   aria-label="User menu"
                 >
                   {user.avatarUrl ? (
                     <img
                       src={user.avatarUrl}
                       alt={user.name || "User"}
-                      className="w-8 h-8 rounded-full object-cover border border-gray-200"
+                      className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover border-2 border-gray-200"
                     />
                   ) : (
-                    <FaUserCircle className="text-lg md:text-xl text-gray-700" />
+                    <FaUserCircle className="text-base sm:text-lg md:text-xl text-gray-700" />
                   )}
-                  <span className="hidden md:block text-sm font-medium text-gray-700">
+                  <span className="hidden md:block text-xs sm:text-sm font-medium text-gray-700">
                     {user.name || user.email}
                   </span>
                 </button>
@@ -167,41 +168,43 @@ export default function Header() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -10, scale: 0.95 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border border-gray-200 z-50 overflow-hidden"
+                      className="absolute right-0 mt-2 sm:mt-3 w-48 sm:w-56 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden"
                     >
                       <div className="py-2">
-                        <div className="px-4 py-3 border-b border-gray-100">
-                          <p className="text-sm font-medium text-gray-900">
+                        <div className="px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-100 bg-gradient-to-r from-green-50 to-emerald-50">
+                          <p className="text-xs sm:text-sm font-semibold text-gray-900">
                             {user.name || "User"}
                           </p>
-                          <p className="text-xs text-gray-500">{user.email}</p>
+                          <p className="text-[10px] sm:text-xs text-gray-600">
+                            {user.email}
+                          </p>
                         </div>
 
                         <Link
                           href="/profile"
-                          className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                          className="flex items-center px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:bg-green-50 transition-colors"
                           onClick={closeMenus}
                         >
-                          <FaUserCircle className="mr-3 text-gray-400" />
+                          <FaUserCircle className="mr-2 sm:mr-3 text-gray-400" />
                           Profile
                         </Link>
 
                         <Link
                           href="/orders"
-                          className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                          className="flex items-center px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:bg-green-50 transition-colors"
                           onClick={closeMenus}
                         >
-                          <FaClipboardList className="mr-3 text-gray-400" />
+                          <FaClipboardList className="mr-2 sm:mr-3 text-gray-400" />
                           Orders
                         </Link>
 
                         {user.role === "admin" && (
                           <Link
                             href="/admin"
-                            className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                            className="flex items-center px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:bg-green-50 transition-colors"
                             onClick={closeMenus}
                           >
-                            <FaCog className="mr-3 text-gray-400" />
+                            <FaCog className="mr-2 sm:mr-3 text-gray-400" />
                             Admin Panel
                           </Link>
                         )}
@@ -209,9 +212,9 @@ export default function Header() {
                         <div className="border-t border-gray-100 mt-2">
                           <button
                             onClick={logout}
-                            className="flex items-center w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                            className="flex items-center w-full px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-red-600 hover:bg-red-50 transition-colors"
                           >
-                            <FaSignOutAlt className="mr-3" />
+                            <FaSignOutAlt className="mr-2 sm:mr-3" />
                             Logout
                           </button>
                         </div>
@@ -224,18 +227,18 @@ export default function Header() {
               <>
                 <Link
                   href="/login"
-                  className="sm:hidden relative p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  className="sm:hidden relative p-1.5 hover:bg-gray-100 rounded-full transition-colors"
                   onClick={closeMenus}
                   aria-label="Login"
                 >
-                  <FaUserCircle className="text-lg text-gray-700 hover:text-primary" />
+                  <FaUserCircle className="text-base text-gray-700 hover:text-primary" />
                 </Link>
                 <Link
                   href="/login"
-                  className="btn-primary hidden sm:flex items-center space-x-2"
+                  className="btn-primary hidden sm:flex items-center space-x-1.5 sm:space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm"
                   onClick={closeMenus}
                 >
-                  <FaUser className="text-sm" />
+                  <FaUser className="text-xs sm:text-sm" />
                   <span>Login</span>
                 </Link>
               </>
@@ -243,13 +246,13 @@ export default function Header() {
 
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="lg:hidden p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors"
               aria-label="Toggle menu"
             >
               {isOpen ? (
-                <FaTimes className="text-lg" />
+                <FaTimes className="text-base sm:text-lg" />
               ) : (
-                <FaBars className="text-lg" />
+                <FaBars className="text-base sm:text-lg" />
               )}
             </button>
           </div>
@@ -262,9 +265,9 @@ export default function Header() {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
-              className="lg:hidden mt-4 pb-4 border-t border-gray-200 pt-4 overflow-hidden"
+              className="lg:hidden mt-3 sm:mt-4 pb-3 sm:pb-4 border-t border-gray-200 pt-3 sm:pt-4 overflow-hidden"
             >
-              <div className="flex flex-col space-y-3">
+              <div className="flex flex-col space-y-2 sm:space-y-3">
                 {[
                   { href: "/", label: "Home" },
                   { href: "/products", label: "Products" },
@@ -276,11 +279,11 @@ export default function Header() {
                     key={item.href}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
+                    transition={{ delay: index * 0.05 }}
                   >
                     <Link
                       href={item.href}
-                      className="block py-2 text-gray-700 hover:text-primary transition-colors font-medium"
+                      className="block py-1.5 sm:py-2 text-sm sm:text-base text-gray-700 hover:text-primary transition-colors font-medium"
                       onClick={closeMenus}
                     >
                       {item.label}
@@ -292,14 +295,14 @@ export default function Header() {
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.5 }}
+                    transition={{ delay: 0.25 }}
                   >
                     <Link
                       href="/login"
-                      className="btn-primary inline-flex items-center space-x-2 mt-2"
+                      className="btn-primary inline-flex items-center space-x-1.5 sm:space-x-2 mt-2 px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm"
                       onClick={closeMenus}
                     >
-                      <FaUser className="text-sm" />
+                      <FaUser className="text-xs sm:text-sm" />
                       <span>Login</span>
                     </Link>
                   </motion.div>

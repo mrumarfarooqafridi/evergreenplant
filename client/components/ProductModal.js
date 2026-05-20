@@ -22,7 +22,7 @@ export default function ProductModal({
 
   if (!isOpen || !product) return null;
 
-  const images = product.images || ["/placeholder.jpg"];
+  const images = product.images || ["/plant-placeholder.svg"];
 
   const handlePrevImage = () => {
     setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
@@ -75,7 +75,7 @@ export default function ProductModal({
                 className="relative bg-gray-100 rounded-lg sm:rounded-xl overflow-hidden h-48 sm:h-64 md:h-96"
               >
                 <Image
-                  src={images[currentImageIndex] || "/placeholder.jpg"}
+                  src={images[currentImageIndex] || "/plant-placeholder.svg"}
                   alt={`${product.name} - Image ${currentImageIndex + 1}`}
                   fill
                   className="object-cover"
@@ -110,7 +110,7 @@ export default function ProductModal({
                         }`}
                       >
                         <Image
-                          src={img || "/placeholder.jpg"}
+                          src={img || "/plant-placeholder.svg"}
                           alt={`Thumbnail ${index + 1}`}
                           fill
                           className="object-cover rounded-lg"

@@ -43,15 +43,31 @@ export default function ClientLayout({ children }) {
         toastOptions={{
           duration: 4000,
           style: {
-            background: "#363636",
-            color: "#fff",
+            background: "#ffffff",
+            color: "#1f2937",
             fontFamily: "var(--font-inter)",
+            fontSize: "14px",
+            borderRadius: "12px",
+            padding: "16px",
+            boxShadow:
+              "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+            border: "1px solid #e5e7eb",
           },
           success: {
             duration: 3000,
             iconTheme: {
               primary: "#22c55e",
               secondary: "#fff",
+            },
+            style: {
+              background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)",
+              color: "#fff",
+              fontSize: "14px",
+              borderRadius: "12px",
+              padding: "16px",
+              boxShadow:
+                "0 10px 15px -3px rgba(34, 197, 94, 0.3), 0 4px 6px -2px rgba(34, 197, 94, 0.2)",
+              border: "none",
             },
           },
           error: {
@@ -60,7 +76,32 @@ export default function ClientLayout({ children }) {
               primary: "#ef4444",
               secondary: "#fff",
             },
+            style: {
+              background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+              color: "#fff",
+              fontSize: "14px",
+              borderRadius: "12px",
+              padding: "16px",
+              boxShadow:
+                "0 10px 15px -3px rgba(239, 68, 68, 0.3), 0 4px 6px -2px rgba(239, 68, 68, 0.2)",
+              border: "none",
+            },
           },
+          loading: {
+            style: {
+              background: "#ffffff",
+              color: "#1f2937",
+              fontSize: "14px",
+              borderRadius: "12px",
+              padding: "16px",
+              boxShadow:
+                "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+              border: "1px solid #e5e7eb",
+            },
+          },
+        }}
+        containerStyle={{
+          fontSize: "14px",
         }}
       />
     </>

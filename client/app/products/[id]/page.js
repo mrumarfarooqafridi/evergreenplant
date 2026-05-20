@@ -65,7 +65,7 @@ export default function ProductDetails() {
         <div>
           <div className="mb-4">
             <Image
-              src={product.images[selectedImage] || "/placeholder.jpg"}
+              src={product.images[selectedImage] || "/plant-placeholder.svg"}
               alt={product.name}
               width={600}
               height={400}
