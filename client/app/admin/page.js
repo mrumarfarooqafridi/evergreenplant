@@ -73,28 +73,28 @@ export default function Admin() {
 
   const statCards = [
     {
-      icon: <ShoppingBag className="w-5 h-5" />,
+      icon: ShoppingBag,
       label: "Total Orders",
       value: stats.totalOrders,
       color: "from-blue-500 to-blue-600",
       bg: "bg-blue-50",
     },
     {
-      icon: <DollarSign className="w-5 h-5" />,
+      icon: DollarSign,
       label: "Revenue",
       value: `AED ${stats.totalRevenue.toFixed(0)}`,
       color: "from-green-500 to-emerald-600",
       bg: "bg-green-50",
     },
     {
-      icon: <Users className="w-5 h-5" />,
+      icon: Users,
       label: "Users",
       value: stats.totalUsers,
       color: "from-purple-500 to-purple-600",
       bg: "bg-purple-50",
     },
     {
-      icon: <Package className="w-5 h-5" />,
+      icon: Package,
       label: "Recent",
       value: stats.recentOrders.length,
       color: "from-orange-500 to-orange-600",
@@ -106,25 +106,25 @@ export default function Admin() {
     {
       href: "/admin/products",
       label: "Products",
-      icon: <Package className="w-4 h-4" />,
+      icon: Package,
       color: "bg-green-500",
     },
     {
       href: "/admin/orders",
       label: "Orders",
-      icon: <ShoppingBag className="w-4 h-4" />,
+      icon: ShoppingBag,
       color: "bg-blue-500",
     },
     {
       href: "/admin/users",
       label: "Users",
-      icon: <Users className="w-4 h-4" />,
+      icon: Users,
       color: "bg-purple-500",
     },
     {
       href: "/admin/blogs",
       label: "Blogs",
-      icon: <FileText className="w-4 h-4" />,
+      icon: FileText,
       color: "bg-orange-500",
     },
   ];

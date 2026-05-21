@@ -161,15 +161,15 @@ export default function About() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
               >
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                <h2 className="text-[1.25rem] sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-6">
                   Our Story
                 </h2>
-                <p className="text-gray-600 text-lg leading-relaxed mb-6">
+                <p className="text-gray-600 text-[1rem] sm:text-lg leading-relaxed mb-3 sm:mb-6">
                   What began as a family passion project has grown into a
                   trusted Dubai nursery delivering premium plants, expert care,
                   and distinctive garden experiences across the UAE.
                 </p>
-                <p className="text-gray-600 text-lg leading-relaxed mb-8">
+                <p className="text-gray-600 text-[1rem] sm:text-lg leading-relaxed mb-4 sm:mb-8">
                   Rooted in thoughtful cultivation, we source only the
                   healthiest plants and nurture every customer relationship.
                   Each plant arrives ready to flourish, curated with premium
