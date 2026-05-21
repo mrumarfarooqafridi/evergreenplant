@@ -35,55 +35,79 @@ const itemVariants = {
 
 export default function Categories() {
   return (
-    <section className="py-10 sm:py-16">
-      <div className="container mx-auto px-5 sm:px-4">
-        <motion.h2
+    <section className="py-8 sm:py-12 md:py-16 bg-gradient-to-b from-white to-gray-50">
+      <div className="container mx-auto px-3 sm:px-4">
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-xl sm:text-3xl font-bold text-center mb-6 sm:mb-12"
+          className="text-center mb-6 sm:mb-8 md:mb-12"
         >
-          Shop by Category
-        </motion.h2>
+          <h2 className="text-lg sm:text-2xl md:text-4xl font-bold text-gray-900 mb-2 sm:mb-4">
+            Shop by Category
+          </h2>
+          <p className="text-[10px] sm:text-sm md:text-lg text-gray-600 max-w-2xl mx-auto">
+            Explore our curated plant collections perfect for every space
+          </p>
+        </motion.div>
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           variants={containerVariants}
-          className="grid grid-cols-4 gap-2 sm:gap-6"
+          className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 md:gap-6"
         >
           {categories.map((category) => (
             <motion.div key={category.slug} variants={itemVariants}>
               <Link href={`/products?category=${category.slug}`}>
                 <div
-                  className={`bg-white rounded-xl shadow-sm border border-gray-100 cursor-pointer group ${
+                  className={`bg-white rounded-2xl shadow-md hover:shadow-2xl border border-gray-100 cursor-pointer group relative overflow-hidden transition-all duration-300 ${
                     category.slug === "indoor"
-                      ? "hover:shadow-[0_8px_30px_rgba(34,197,94,0.3)]"
+                      ? "hover:shadow-[0_20px_60px_rgba(34,197,94,0.25)] hover:border-green-200"
                       : category.slug === "outdoor"
-                        ? "hover:shadow-[0_8px_30px_rgba(251,191,36,0.3)]"
+                        ? "hover:shadow-[0_20px_60px_rgba(251,191,36,0.25)] hover:border-amber-200"
                         : category.slug === "succulents"
-                          ? "hover:shadow-[0_8px_30px_rgba(168,85,247,0.3)]"
-                          : "hover:shadow-[0_8px_30px_rgba(236,72,153,0.3)]"
-                  } transition-shadow duration-300`}
+                          ? "hover:shadow-[0_20px_60px_rgba(168,85,247,0.25)] hover:border-purple-200"
+                          : "hover:shadow-[0_20px_60px_rgba(236,72,153,0.25)] hover:border-pink-200"
+                  }`}
                 >
-                  <div className="p-3 sm:p-5 flex flex-col items-center justify-center text-center gap-2 sm:gap-3">
+                  {/* Gradient Background Overlay */}
+                  <div
+                    className={`absolute inset-0 opacity-0 group-hover:opacity-5 transition-opacity duration-300 ${
+                      category.slug === "indoor"
+                        ? "bg-gradient-to-br from-green-500 to-emerald-600"
+                        : category.slug === "outdoor"
+                          ? "bg-gradient-to-br from-amber-500 to-orange-600"
+                          : category.slug === "succulents"
+                            ? "bg-gradient-to-br from-purple-500 to-violet-600"
+                            : "bg-gradient-to-br from-pink-500 to-rose-600"
+                    }`}
+                  />
+
+                  <div className="p-3 sm:p-4 md:p-6 flex flex-col items-center justify-center text-center gap-2 sm:gap-3 relative z-10">
                     <div
-                      className={`w-9 h-9 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform ${
+                      className={`w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 ${
                         category.slug === "indoor"
-                          ? "bg-gradient-to-br from-green-500 to-emerald-600"
+                          ? "bg-gradient-to-br from-green-500 to-emerald-600 shadow-green-200"
                           : category.slug === "outdoor"
-                            ? "bg-gradient-to-br from-amber-500 to-orange-600"
+                            ? "bg-gradient-to-br from-amber-500 to-orange-600 shadow-amber-200"
                             : category.slug === "succulents"
-                              ? "bg-gradient-to-br from-purple-500 to-violet-600"
-                              : "bg-gradient-to-br from-pink-500 to-rose-600"
+                              ? "bg-gradient-to-br from-purple-500 to-violet-600 shadow-purple-200"
+                              : "bg-gradient-to-br from-pink-500 to-rose-600 shadow-pink-200"
                       }`}
                     >
-                      <category.Icon className="w-5 h-5 sm:w-6 sm:h-6" />
+                      <category.Icon className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8" />
                     </div>
-                    <h3 className="font-semibold text-[11px] sm:text-base text-gray-800 group-hover:text-primary transition-colors leading-tight">
+                    <h3 className="font-semibold text-[10px] sm:text-sm md:text-base text-gray-800 group-hover:text-primary transition-colors leading-tight">
                       {category.name}
                     </h3>
+                    <span className="text-[8px] sm:text-xs md:text-sm text-gray-500 group-hover:text-gray-700 transition-colors">
+                      {category.slug === "indoor" && "Perfect for homes"}
+                      {category.slug === "outdoor" && "Garden favorites"}
+                      {category.slug === "succulents" && "Easy care plants"}
+                      {category.slug === "flowering" && "Beautiful blooms"}
+                    </span>
                   </div>
                 </div>
               </Link>

@@ -219,12 +219,17 @@ export default function FeaturedProducts() {
                         <Image
                           src={product.images[0] || "/plant-placeholder.svg"}
                           alt={product.name}
-                          width={70}
-                          height={70}
+                          width={85}
+                          height={85}
                           className="w-full h-full object-cover"
                           loading="lazy"
                         />
                       </motion.div>
+
+                      {/* Leaf Icon Overlay - Small Screen */}
+                      <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm rounded-full p-1.5 shadow-md">
+                        <FaLeaf className="text-green-600 w-3 h-3 sm:w-4 sm:h-4" />
+                      </div>
 
                       {/* Category Badge - Small Screen */}
                       <div className="absolute bottom-2 left-2 right-2">

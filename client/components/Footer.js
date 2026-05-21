@@ -111,8 +111,8 @@ export default function Footer() {
       )}
 
       {/* Main Footer Content */}
-      <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 md:py-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 md:gap-8">
+      <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-4 md:py-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 sm:gap-3 md:gap-6">
           {/* Company Info */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -120,17 +120,17 @@ export default function Footer() {
             transition={{ duration: 0.6, delay: 0.1 }}
             viewport={{ once: true }}
           >
-            <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-4 md:mb-6">
-              <FaLeaf className="text-primary text-[10px] sm:text-lg md:text-2xl" />
-              <h3 className="text-[8px] sm:text-base md:text-xl font-bold">
+            <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-3 md:mb-4">
+              <FaLeaf className="text-primary text-[8px] sm:text-base md:text-xl" />
+              <h3 className="text-[7px] sm:text-sm md:text-lg font-bold">
                 Evergreen Nursery
               </h3>
             </div>
-            <p className="text-gray-300 mb-1 sm:mb-4 md:mb-6 leading-relaxed text-[8px] sm:text-xs md:text-base">
+            <p className="text-gray-300 mb-1 sm:mb-3 md:mb-4 leading-relaxed text-[6px] sm:text-[11px] md:text-sm">
               Your trusted source for beautiful, healthy plants and expert
               gardening advice. Bringing nature closer to your home.
             </p>
-            <div className="flex space-x-2 sm:space-x-4">
+            <div className="flex space-x-1.5 sm:space-x-3">
               {[
                 {
                   icon: FaFacebook,
@@ -158,12 +158,12 @@ export default function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-5 h-5 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-300"
+                  className="w-4 h-4 sm:w-7 sm:h-7 md:w-9 md:h-9 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-300"
                   aria-label={social.label}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <social.icon className="text-[8px] sm:text-xs md:text-sm" />
+                  <social.icon className="text-[6px] sm:text-[10px] md:text-xs" />
                 </motion.a>
               ))}
             </div>
@@ -177,10 +177,10 @@ export default function Footer() {
             viewport={{ once: true }}
             className="hidden md:block"
           >
-            <h4 className="text-[8px] sm:text-sm md:text-lg font-semibold mb-1 sm:mb-4 md:mb-6 text-white">
+            <h4 className="text-[7px] sm:text-xs md:text-base font-semibold mb-1 sm:mb-3 md:mb-4 text-white">
               Quick Links
             </h4>
-            <ul className="space-y-1 sm:space-y-3">
+            <ul className="space-y-1 sm:space-y-2 md:space-y-3">
               {[
                 { href: "/", label: "Home" },
                 { href: "/products", label: "Products" },
@@ -193,7 +193,7 @@ export default function Footer() {
                   <motion.div whileHover={{ x: 5 }}>
                     <Link
                       href={item.href}
-                      className="text-gray-300 text-[8px] sm:text-xs md:text-sm hover:text-primary transition-colors duration-300 flex items-center group"
+                      className="text-gray-300 text-[6px] sm:text-[11px] md:text-sm hover:text-primary transition-colors duration-300 flex items-center group"
                     >
                       <span className="w-0 group-hover:w-2 h-0.5 bg-primary transition-all duration-300 mr-0 group-hover:mr-2"></span>
                       {item.label}
@@ -211,10 +211,10 @@ export default function Footer() {
             transition={{ duration: 0.6, delay: 0.3 }}
             viewport={{ once: true }}
           >
-            <h4 className="text-[8px] sm:text-sm md:text-lg font-semibold mb-1 sm:mb-4 md:mb-6 text-white">
+            <h4 className="text-[7px] sm:text-xs md:text-base font-semibold mb-1 sm:mb-3 md:mb-4 text-white">
               Customer Service
             </h4>
-            <ul className="space-y-1 sm:space-y-3">
+            <ul className="space-y-1 sm:space-y-2 md:space-y-3">
               {[
                 { href: "/track-order", label: "Track Order", icon: FaBox },
                 {
@@ -230,9 +230,9 @@ export default function Footer() {
                   <motion.div whileHover={{ x: 5 }}>
                     <Link
                       href={item.href}
-                      className="text-gray-300 text-[8px] sm:text-xs md:text-sm hover:text-primary transition-colors duration-300 flex items-center group"
+                      className="text-gray-300 text-[6px] sm:text-[11px] md:text-sm hover:text-primary transition-colors duration-300 flex items-center group"
                     >
-                      <item.icon className="w-2 h-2 sm:w-3 sm:h-3 md:w-4 md:h-4 mr-1 sm:mr-2 text-primary/70 group-hover:text-primary transition-colors" />
+                      <item.icon className="w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 mr-1 sm:mr-2 text-primary/70 group-hover:text-primary transition-colors" />
                       {item.label}
                     </Link>
                   </motion.div>
@@ -249,14 +249,14 @@ export default function Footer() {
             viewport={{ once: true }}
             className="hidden md:block"
           >
-            <h4 className="text-[8px] sm:text-sm md:text-lg font-semibold mb-1 sm:mb-4 md:mb-6 text-white">
+            <h4 className="text-[7px] sm:text-xs md:text-base font-semibold mb-1 sm:mb-3 md:mb-4 text-white">
               Contact Info
             </h4>
-            <div className="space-y-2 sm:space-y-4">
+            <div className="space-y-1.5 sm:space-y-3 md:space-y-4">
               <div className="flex items-start space-x-1 sm:space-x-3">
-                <FaMapMarkerAlt className="text-primary mt-1 flex-shrink-0 text-[8px] sm:text-sm md:text-base" />
+                <FaMapMarkerAlt className="text-primary mt-1 flex-shrink-0 text-[6px] sm:text-xs md:text-sm" />
                 <div>
-                  <p className="text-gray-300 text-[8px] sm:text-xs md:text-base">
+                  <p className="text-gray-300 text-[6px] sm:text-[11px] md:text-sm">
                     Greece K15 office 08 international city Dubai
                     <br />
                     United Arab Emirates
@@ -265,29 +265,29 @@ export default function Footer() {
               </div>
 
               <div className="flex items-center space-x-1 sm:space-x-3">
-                <FaPhone className="text-primary flex-shrink-0 text-[8px] sm:text-sm md:text-base" />
+                <FaPhone className="text-primary flex-shrink-0 text-[6px] sm:text-xs md:text-sm" />
                 <a
                   href="tel:+97144522367"
-                  className="text-gray-300 text-[8px] sm:text-xs md:text-base hover:text-primary transition-colors"
+                  className="text-gray-300 text-[6px] sm:text-[11px] md:text-sm hover:text-primary transition-colors"
                 >
                   +971 44 522 367
                 </a>
               </div>
 
               <div className="flex items-center space-x-1 sm:space-x-3">
-                <FaEnvelope className="text-primary flex-shrink-0 text-[8px] sm:text-sm md:text-base" />
+                <FaEnvelope className="text-primary flex-shrink-0 text-[6px] sm:text-xs md:text-sm" />
                 <a
                   href="mailto:muazam@greenie.ae"
-                  className="text-gray-300 text-[8px] sm:text-xs md:text-base hover:text-primary transition-colors"
+                  className="text-gray-300 text-[6px] sm:text-[11px] md:text-sm hover:text-primary transition-colors"
                 >
                   muazam@greenie.ae
                 </a>
               </div>
 
               <div className="flex items-start space-x-1 sm:space-x-3">
-                <FaClock className="text-primary mt-1 flex-shrink-0 text-[8px] sm:text-sm md:text-base" />
+                <FaClock className="text-primary mt-1 flex-shrink-0 text-[6px] sm:text-xs md:text-sm" />
                 <div>
-                  <p className="text-gray-300 text-[8px] sm:text-xs md:text-base">
+                  <p className="text-gray-300 text-[6px] sm:text-[11px] md:text-sm">
                     Mon - Sat: 9AM - 7PM
                     <br />
                     Sunday: 10AM - 4PM
@@ -301,12 +301,12 @@ export default function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-gray-700">
-        <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-4 md:py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-1 sm:space-y-4 md:space-y-0">
-            <p className="text-gray-300 text-[7px] sm:text-xs">
+        <div className="container mx-auto px-2 sm:px-4 py-1.5 sm:py-3 md:py-4">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-1 sm:space-y-3 md:space-y-0">
+            <p className="text-gray-300 text-[6px] sm:text-[10px] md:text-xs">
               &copy; 2024 Evergreen Plant Nursery. All rights reserved.
             </p>
-            <div className="flex flex-wrap gap-1 sm:gap-3 md:gap-6 text-[7px] sm:text-xs">
+            <div className="flex flex-wrap gap-1 sm:gap-2 md:gap-4 text-[6px] sm:text-[10px] md:text-xs">
               <Link
                 href="/privacy"
                 className="text-gray-300 hover:text-primary transition-colors"

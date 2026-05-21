@@ -68,14 +68,14 @@ export default function Testimonials() {
           whileInView="visible"
           viewport={{ once: true }}
           variants={containerVariants}
-          className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-6"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 md:gap-6"
         >
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={index}
               variants={itemVariants}
               whileHover={{ y: -3 }}
-              className="bg-white p-2 sm:p-4 md:p-6 rounded-lg sm:rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 aspect-square flex flex-col justify-between"
+              className="bg-white p-3 sm:p-4 md:p-6 rounded-lg sm:rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 flex flex-col justify-between"
             >
               <div>
                 <div className="flex gap-0.5 mb-1.5 sm:mb-3 md:mb-4">

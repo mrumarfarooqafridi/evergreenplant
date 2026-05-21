@@ -39,7 +39,10 @@ export default function Products() {
     fetchProducts(nextFilters, 1);
   }, [searchParams]);
 
-  const fetchProducts = async (filterParams = filters, pageNum = currentPage) => {
+  const fetchProducts = async (
+    filterParams = filters,
+    pageNum = currentPage,
+  ) => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -54,10 +57,17 @@ export default function Products() {
       );
       setProducts(response.data.products || []);
       setTotalPages(response.data.totalPages || 1);
-      setTotal(typeof response.data.total === "number" ? response.data.total : 0);
+      setTotal(
+        typeof response.data.total === "number" ? response.data.total : 0,
+      );
     } catch (error) {
       console.error("Error fetching products:", error);
-      toast.error("Failed to load products");
+      setProducts([]);
+      setTotalPages(1);
+      setTotal(0);
+      if (pageNum === 1 && Object.values(filterParams).some((v) => v)) {
+        toast.error("No products found for these filters");
+      }
     }
     setLoading(false);
   };
@@ -108,7 +118,8 @@ export default function Products() {
   };
 
   const startIndex = total === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = total === 0 ? 0 : Math.min(startIndex + products.length, total);
+  const endIndex =
+    total === 0 ? 0 : Math.min(startIndex + products.length, total);
 
   if (loading) {
     return (
@@ -153,7 +164,8 @@ export default function Products() {
       {/* Results Info & Mobile Filter Button */}
       <div className="mb-6 flex justify-between items-center flex-wrap gap-3">
         <p className="text-gray-600 font-medium">
-          Showing {total === 0 ? 0 : startIndex + 1}-{endIndex} of {total} products
+          Showing {total === 0 ? 0 : startIndex + 1}-{endIndex} of {total}{" "}
+          products
         </p>
         <motion.button
           whileHover={{ scale: 1.05 }}
