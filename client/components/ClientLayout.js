@@ -46,7 +46,6 @@ export default function ClientLayout({ children }) {
             background: "#ffffff",
             color: "#1f2937",
             fontFamily: "var(--font-inter)",
-            fontSize: "14px",
             borderRadius: "12px",
             padding: "16px",
             boxShadow:
@@ -62,7 +61,6 @@ export default function ClientLayout({ children }) {
             style: {
               background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)",
               color: "#fff",
-              fontSize: "14px",
               borderRadius: "12px",
               padding: "16px",
               boxShadow:
@@ -79,7 +77,6 @@ export default function ClientLayout({ children }) {
             style: {
               background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
               color: "#fff",
-              fontSize: "14px",
               borderRadius: "12px",
               padding: "16px",
               boxShadow:
@@ -91,7 +88,6 @@ export default function ClientLayout({ children }) {
             style: {
               background: "#ffffff",
               color: "#1f2937",
-              fontSize: "14px",
               borderRadius: "12px",
               padding: "16px",
               boxShadow:
@@ -101,8 +97,9 @@ export default function ClientLayout({ children }) {
           },
         }}
         containerStyle={{
-          fontSize: "14px",
+          fontSize: "inherit",
         }}
+        className="text-xs sm:text-sm"
       />
     </>
   );
