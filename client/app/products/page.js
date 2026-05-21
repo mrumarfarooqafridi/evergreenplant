@@ -143,10 +143,10 @@ export default function Products() {
         transition={{ duration: 0.5 }}
         className="mb-8 md:mb-12"
       >
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-3">
+        <h1 className="text-lg sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-3">
           Our Plants Collection
         </h1>
-        <p className="text-gray-600 text-sm md:text-base">
+        <p className="text-gray-600 text-xs sm:text-sm md:text-base">
           Discover our beautiful selection of plants for every space
         </p>
       </motion.div>
