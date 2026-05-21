@@ -42,7 +42,7 @@ export default function Hero() {
           transition={{ duration: 0.8 }}
           className="max-w-4xl mx-auto"
         >
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+          <h1 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-6 leading-tight">
             Welcome to <span className="text-yellow-300">Evergreen</span>{" "}
             Nursery
           </h1>
