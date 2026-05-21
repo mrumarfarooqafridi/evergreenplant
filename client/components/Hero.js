@@ -70,7 +70,7 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="mb-12"
           >
-            <blockquote className="text-lg md:text-xl italic font-light max-w-2xl mx-auto leading-relaxed">
+            <blockquote className="text-xs sm:text-sm md:text-lg lg:text-xl italic font-light max-w-2xl mx-auto leading-relaxed">
               &ldquo;The clearest way into the Universe is through a forest
               wilderness.&rdquo;
               <br />
@@ -88,16 +88,16 @@ export default function Hero() {
           >
             <Link
               href="/products"
-              className="btn-primary bg-white text-green-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold shadow-2xl transform hover:scale-105 transition-all duration-300"
+              className="btn-primary bg-white text-green-600 hover:bg-gray-100 px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 text-xs sm:text-sm md:text-lg font-semibold shadow-2xl transform hover:scale-105 transition-all duration-300"
             >
-              <FaSeedling className="inline mr-2" />
+              <FaSeedling className="inline mr-1 sm:mr-2" />
               Shop Plants
             </Link>
             <Link
               href="/about"
-              className="btn-outline border-2 border-white text-white hover:bg-white hover:text-green-600 px-8 py-4 text-lg font-semibold shadow-xl transform hover:scale-105 transition-all duration-300"
+              className="btn-outline border-2 border-white text-white hover:bg-white hover:text-green-600 px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 text-xs sm:text-sm md:text-lg font-semibold shadow-xl transform hover:scale-105 transition-all duration-300"
             >
-              <FaLeaf className="inline mr-2" />
+              <FaLeaf className="inline mr-1 sm:mr-2" />
               Learn More
             </Link>
           </motion.div>

@@ -238,10 +238,10 @@ export default function About() {
                 <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mb-6">
                   <Award className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+                <h3 className="text-lg sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2 sm:mb-4">
                   Our Mission
                 </h3>
-                <p className="text-gray-600 text-lg leading-relaxed">
+                <p className="text-gray-600 text-[10px] sm:text-lg leading-relaxed">
                   To make premium plants and thoughtful gardening support
                   accessible for every home and workplace in the UAE, while
                   delivering an elevated customer experience that exceeds
@@ -259,10 +259,10 @@ export default function About() {
                 <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center mb-6">
                   <Users className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+                <h3 className="text-lg sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2 sm:mb-4">
                   Our Vision
                 </h3>
-                <p className="text-gray-600 text-lg leading-relaxed">
+                <p className="text-gray-600 text-[10px] sm:text-lg leading-relaxed">
                   To become the region's most trusted nursery brand, known for
                   sustainability, design, and exceptional care in every plant we
                   deliver, inspiring a greener future for generations.
@@ -326,10 +326,10 @@ export default function About() {
             viewport={{ once: true }}
             className="max-w-4xl mx-auto text-center"
           >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
+            <h2 className="text-lg sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-6">
               Ready to Transform Your Space?
             </h2>
-            <p className="text-green-100 text-lg md:text-xl mb-8 max-w-2xl mx-auto">
+            <p className="text-green-100 text-[10px] sm:text-lg md:text-xl mb-4 sm:mb-8 max-w-2xl mx-auto">
               Join thousands of satisfied customers who have brought nature into
               their homes with Evergreen Nursery
             </p>
