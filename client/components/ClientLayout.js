@@ -47,7 +47,7 @@ export default function ClientLayout({ children }) {
             color: "#1f2937",
             fontFamily: "var(--font-inter)",
             borderRadius: "12px",
-            padding: "16px",
+            padding: "10px",
             boxShadow:
               "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
             border: "1px solid #e5e7eb",
@@ -62,7 +62,7 @@ export default function ClientLayout({ children }) {
               background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)",
               color: "#fff",
               borderRadius: "12px",
-              padding: "16px",
+              padding: "10px",
               boxShadow:
                 "0 10px 15px -3px rgba(34, 197, 94, 0.3), 0 4px 6px -2px rgba(34, 197, 94, 0.2)",
               border: "none",
@@ -78,7 +78,7 @@ export default function ClientLayout({ children }) {
               background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
               color: "#fff",
               borderRadius: "12px",
-              padding: "16px",
+              padding: "10px",
               boxShadow:
                 "0 10px 15px -3px rgba(239, 68, 68, 0.3), 0 4px 6px -2px rgba(239, 68, 68, 0.2)",
               border: "none",
@@ -89,7 +89,7 @@ export default function ClientLayout({ children }) {
               background: "#ffffff",
               color: "#1f2937",
               borderRadius: "12px",
-              padding: "16px",
+              padding: "10px",
               boxShadow:
                 "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
               border: "1px solid #e5e7eb",
