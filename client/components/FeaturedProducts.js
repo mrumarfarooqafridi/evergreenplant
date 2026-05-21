@@ -355,21 +355,21 @@ export default function FeaturedProducts() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mt-16"
+          className="text-center mt-8 sm:mt-16"
         >
-          <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/50 max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xl border border-white/50 max-w-2xl mx-auto">
+            <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-4">
               Ready to Transform Your Space?
             </h3>
-            <p className="text-gray-600 mb-8">
+            <p className="text-[10px] sm:text-base text-gray-600 mb-4 sm:mb-8">
               Explore our complete collection of premium plants and find the
               perfect additions to your home or garden
             </p>
             <Link
               href="/products"
-              className="inline-flex items-center space-x-3 bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-4 rounded-2xl text-lg font-semibold hover:from-green-600 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              className="inline-flex items-center space-x-2 sm:space-x-3 bg-gradient-to-r from-green-500 to-green-600 text-white px-4 sm:px-8 py-2 sm:py-4 rounded-xl sm:rounded-2xl text-sm sm:text-lg font-semibold hover:from-green-600 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
             >
-              <FaShoppingCart className="text-xl" />
+              <FaShoppingCart className="text-sm sm:text-xl" />
               <span>Explore All Products</span>
             </Link>
           </div>

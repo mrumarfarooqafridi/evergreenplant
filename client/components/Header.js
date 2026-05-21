@@ -246,7 +246,7 @@ export default function Header() {
 
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="lg:hidden p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="lg:hidden p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors mr-1 sm:mr-0"
               aria-label="Toggle menu"
             >
               {isOpen ? (
