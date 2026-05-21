@@ -27,6 +27,10 @@ export const metadata = {
     default: "Evergreen Plant Nursery | Premium Plants in UAE",
     template: "%s | Evergreen Nursery",
   },
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
   description:
     "Discover a world of beautiful plants, expert care tips, and everything you need to create your perfect green space. Premium plant nursery in UAE with fast delivery across Dubai and the Emirates.",
   keywords:

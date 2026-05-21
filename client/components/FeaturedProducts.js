@@ -11,6 +11,7 @@ import {
   FaStar,
   FaChevronLeft,
   FaChevronRight,
+  FaLeaf,
 } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { Swiper, SwiperSlide } from "swiper/react";
