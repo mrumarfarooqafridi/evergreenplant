@@ -23,37 +23,37 @@ export default function About() {
 
   const features = [
     {
-      icon: <Leaf className="w-8 h-8" />,
+      icon: <Leaf className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" />,
       title: "Quality Plants",
       description:
         "Handpicked selections, carefully nurtured for longevity and beauty. Every plant is inspected before delivery.",
     },
     {
-      icon: <Truck className="w-8 h-8" />,
+      icon: <Truck className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" />,
       title: "Fast Delivery",
       description:
         "Reliable, on-time delivery across Dubai and the UAE with careful handling to ensure plants arrive healthy.",
     },
     {
-      icon: <MessageCircle className="w-8 h-8" />,
+      icon: <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" />,
       title: "Expert Advice",
       description:
         "Professional guidance to help every plant thrive. Our team is always available for your questions.",
     },
     {
-      icon: <Award className="w-8 h-8" />,
+      icon: <Award className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" />,
       title: "Premium Quality",
       description:
         "We source only the finest plants from trusted growers, ensuring excellence in every purchase.",
     },
     {
-      icon: <Users className="w-8 h-8" />,
+      icon: <Users className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" />,
       title: "Community Focus",
       description:
         "Building a community of plant lovers who share knowledge and passion for greenery.",
     },
     {
-      icon: <Heart className="w-8 h-8" />,
+      icon: <Heart className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" />,
       title: "Customer Care",
       description:
         "Dedicated support before and after purchase. Your satisfaction is our top priority.",
@@ -126,9 +126,9 @@ export default function About() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-white">
+      <section className="py-8 sm:py-16 bg-white">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-4 gap-2 sm:gap-4 md:gap-8">
             {stats.map((stat, index) => (
               <motion.div
                 key={index}
@@ -138,10 +138,12 @@ export default function About() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="text-4xl md:text-5xl font-bold text-green-600 mb-2">
+                <div className="text-[1.25rem] sm:text-4xl md:text-5xl font-bold text-green-600 mb-1 sm:mb-2">
                   {stat.value}
                 </div>
-                <div className="text-gray-600 font-medium">{stat.label}</div>
+                <div className="text-[8px] sm:text-sm md:text-base text-gray-600 font-medium">
+                  {stat.label}
+                </div>
               </motion.div>
             ))}
           </div>

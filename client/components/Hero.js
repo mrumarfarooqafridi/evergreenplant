@@ -7,7 +7,7 @@ import { FaLeaf, FaSeedling, FaTree } from "react-icons/fa";
 
 export default function Hero() {
   return (
-    <section className="relative bg-gradient-to-br from-green-400 via-green-500 to-green-600 text-white py-20 md:py-32 overflow-hidden">
+    <section className="relative bg-gradient-to-br from-green-400 via-green-500 to-green-600 text-white py-4 sm:py-10 md:py-20 lg:py-32 overflow-hidden">
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -47,7 +47,7 @@ export default function Hero() {
             Nursery
           </h1>
 
-          <div className="text-xl md:text-2xl lg:text-3xl mb-8 h-20 md:h-16 flex items-center justify-center">
+          <div className="text-[1rem] sm:text-base md:text-xl lg:text-2xl mb-4 sm:mb-8 h-10 sm:h-12 md:h-16 lg:h-20 flex items-center justify-center">
             <TypeAnimation
               sequence={[
                 "Discover a world of beautiful plants",
