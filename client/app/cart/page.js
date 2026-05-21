@@ -74,9 +74,9 @@ export default function Cart() {
           {cart.map((item, index) => (
             <div
               key={index}
-              className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 bg-white p-3 sm:p-4 rounded-lg shadow-md border border-gray-100 overflow-hidden"
+              className="flex items-center gap-3 sm:gap-4 bg-white p-3 sm:p-4 rounded-lg shadow-md border border-gray-100 overflow-hidden"
             >
-              <div className="relative w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0">
+              <div className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex-shrink-0">
                 <Image
                   src={item.product.images[0] || "/plant-placeholder.svg"}
                   alt={item.product.name}
@@ -100,36 +100,34 @@ export default function Cart() {
                 )}
               </div>
 
-              <div className="flex flex-row sm:flex-col items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-start">
-                <div className="flex items-center gap-1 sm:gap-2">
-                  <button
-                    onClick={() => updateQuantity(index, item.quantity - 1)}
-                    className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
-                  >
-                    -
-                  </button>
-                  <span className="w-8 sm:w-10 text-center text-xs sm:text-sm font-medium">
-                    {item.quantity}
-                  </span>
-                  <button
-                    onClick={() => updateQuantity(index, item.quantity + 1)}
-                    className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
-                  >
-                    +
-                  </button>
-                </div>
+              <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                <button
+                  onClick={() => updateQuantity(index, item.quantity - 1)}
+                  className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-xs sm:text-sm md:text-base"
+                >
+                  -
+                </button>
+                <span className="w-6 sm:w-8 md:w-10 text-center text-[10px] sm:text-xs md:text-sm font-medium">
+                  {item.quantity}
+                </span>
+                <button
+                  onClick={() => updateQuantity(index, item.quantity + 1)}
+                  className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-xs sm:text-sm md:text-base"
+                >
+                  +
+                </button>
               </div>
 
-              <div className="flex flex-row sm:flex-col items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
-                <p className="font-semibold text-sm sm:text-base text-gray-900">
+              <div className="flex flex-col items-end gap-1 sm:gap-2 flex-shrink-0">
+                <p className="font-semibold text-xs sm:text-sm md:text-base text-gray-900">
                   AED {(item.product.price * item.quantity).toFixed(2)}
                 </p>
                 <button
                   onClick={() => removeItem(index)}
-                  className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-colors"
+                  className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 sm:p-2 rounded-lg transition-colors"
                   aria-label="Remove item"
                 >
-                  <FaTrash className="w-4 h-4" />
+                  <FaTrash className="w-3 h-3 sm:w-4 sm:h-4" />
                 </button>
               </div>
             </div>
